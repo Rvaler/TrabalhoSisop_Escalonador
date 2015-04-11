@@ -1,12 +1,25 @@
 # depslib dependency file v1.0
-1428466380 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/main.c
+1428711433 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/main.c
 	<stdio.h>
 	<stdlib.h>
 	"include/mdata.h"
 	"include/mthread.h"
 
-1428466491 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mdata.h
+1428774900 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mdata.h
 	<ucontext.h>
 
-1427285634 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mthread.h
+1428775448 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mthread.h
+	"mdata.h"
+
+1428775648 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
+	<stdio.h>
+	<stdlib.h>
+	"../include/mdata.h"
+	"../include/mthread.h"
+
+1428775519 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<ucontext.h>
+	<stdio.h>
 

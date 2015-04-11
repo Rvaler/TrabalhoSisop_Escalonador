@@ -9,6 +9,8 @@
 #ifndef __mthread__
 #define __mthread__
 
+#include "mdata.h"
+
 typedef struct mutex {
 	int	flag; 					// indica se o mutex foi adquirido ou não (0: livre; 1: ocupado)
 	struct TCB	*first, *last; 	// ponteiros para lista de threads bloqueadas no mutex

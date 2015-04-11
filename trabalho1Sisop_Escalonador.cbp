@@ -33,8 +33,12 @@
 		</Compiler>
 		<Unit filename="include/mdata.h" />
 		<Unit filename="include/mthread.h" />
-		<Unit filename="main.c">
+		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/mthread.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Extensions>
 			<code_completion />
