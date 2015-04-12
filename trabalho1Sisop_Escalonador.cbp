@@ -38,7 +38,7 @@
 		</Unit>
 		<Unit filename="src/mthread.c">
 			<Option compilerVar="CC" />
-			<Option target="&lt;{~None~}&gt;" />
+			<Option target="Debug" />
 		</Unit>
 		<Extensions>
 			<code_completion />

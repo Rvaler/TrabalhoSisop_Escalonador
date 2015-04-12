@@ -2,12 +2,18 @@
 #include "../include/mdata.h"
 #include <ucontext.h>
 #include <stdio.h>
+#include <stdlib.h> //usada para malloc
 
 int tid = 1;                 //global var, tid of the thread
 int n_threads = 0;           //number of threads
 ucontext_t main_context; //future main_context (dont know if this is necessary)
 ucontext_t exit_context; //all threads, when finished, are redirected to this context
 
+
+//initialize three priority queues:
+TCB_t* tcbQueueLow = NULL;
+TCB_t* tcbQueueMedium = NULL;
+TCB_t* tcbQueueHigh = NULL;
 
 /*
     Creation of a new Thread and put it on ready state
@@ -46,6 +52,19 @@ int mcreate(int prio, void (*start)(void*), void * arg)
 
 
     ///precisa colocar na fila de aptos aqui
+    switch(prio){
+        case 0: //high
+            tcbQueueHigh = enqueue(tcbQueueHigh, newThread);
+            break;
+        case 1:
+            tcbQueueMedium = enqueue(tcbQueueMedium, newThread);
+            break;
+        case 2:
+            tcbQueueLow = enqueue(tcbQueueLow, newThread);
+            break;
+    }
+    //printQueue(tcbQueueHigh);
+    //printQueueReverse(tcbQueueHigh);
     //printf("\ntid da thread %i", tid);
     //printf("\ntid da thread %i", newThread->tid);
     return newThread->tid; //identificador da thread criada
