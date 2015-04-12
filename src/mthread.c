@@ -63,7 +63,7 @@ int mcreate(int prio, void (*start)(void*), void * arg)
             tcbQueueLow = enqueue(tcbQueueLow, newThread);
             break;
     }
-    //printQueue(tcbQueueHigh);
+    printQueue(tcbQueueHigh);
     //printQueueReverse(tcbQueueHigh);
     //printf("\ntid da thread %i", tid);
     //printf("\ntid da thread %i", newThread->tid);

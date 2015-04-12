@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     id0 = mcreate(0, func0, (void *)&i);
     id1 = mcreate(0, func1, (void *)&i);
     id2 = mcreate(1, func1, (void *)&i);
+
     //int teste = mcreate(2, func0, (void *)&i);
     printf("\nid0 = %i", id0);
     printf("\nid1 = %i", id1);
