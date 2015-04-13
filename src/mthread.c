@@ -15,6 +15,10 @@ TCB_t* tcbQueueLow = NULL;
 TCB_t* tcbQueueMedium = NULL;
 TCB_t* tcbQueueHigh = NULL;
 
+//current thread running in the core
+TCB_t* runningThread = NULL;
+
+
 /*
     Creation of a new Thread and put it on ready state
 */
@@ -26,7 +30,7 @@ int mcreate(int prio, void (*start)(void*), void * arg)
     }
 
     newThread->tid = tid++;
-    newThread->state = 0; /// state READY
+    newThread->state = READY_STATE;
     newThread->context = (ucontext_t*) malloc(sizeof(ucontext_t));
     if(newThread->context == NULL){
         return -1;
@@ -63,11 +67,56 @@ int mcreate(int prio, void (*start)(void*), void * arg)
             tcbQueueLow = enqueue(tcbQueueLow, newThread);
             break;
     }
-    printQueue(tcbQueueHigh);
+
     //printQueueReverse(tcbQueueHigh);
     //printf("\ntid da thread %i", tid);
     //printf("\ntid da thread %i", newThread->tid);
     return newThread->tid; //identificador da thread criada
+}
+
+void FuncaoParaTeste(){
+
+/* TESTE YIELD
+    TCB_t *teste = (TCB_t*) malloc(sizeof(TCB_t));
+    teste->prio = 0;
+    teste->tid = 69;
+    runningThread = teste;
+
+    myield();
+    printQueue(tcbQueueHigh);
+    return;
+*/
+
+}
+
+///removes the running thread and put it on its current queue
+int myield()
+{
+    //if there's no thread executing, error!
+    if (runningThread ==  NULL)
+    {
+        return -1;
+    }
+    TCB_t *removedFromRunning;
+    removedFromRunning = runningThread;
+    removedFromRunning->state = READY_STATE;
+
+    switch(removedFromRunning->prio)
+    {
+        case 0: //high
+            tcbQueueHigh = enqueue(tcbQueueHigh, removedFromRunning);
+            break;
+        case 1:
+            tcbQueueMedium = enqueue(tcbQueueMedium, removedFromRunning);
+            break;
+        case 2:
+            tcbQueueLow = enqueue(tcbQueueLow, removedFromRunning);
+            break;
+    }
+
+    /// HERE WE HAVE TO CALL THE SCHEDULER!!!!!
+
+    return 0;
 }
 
 

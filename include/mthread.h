@@ -23,4 +23,5 @@ int mmutex_init(mmutex_t *mtx);
 int mlock (mmutex_t *mtx);
 int munlock (mmutex_t *mtx);
 
+void FuncaoParaTeste(void);
 #endif

@@ -1,4 +1,4 @@
-#include <ucontext.h>
+
 /*
  * mdata.h: arquivo de inclusão de uso apenas na geração da libmthread
  *
@@ -8,6 +8,15 @@
 
 #ifndef __mdata__
 #define __mdata__
+
+#include <ucontext.h>
+
+#define CREATION_STATE 0
+#define READY_STATE 1
+#define RUNNING_STATE 2
+#define BLOCKED_STATE 3
+#define END_STATE 4
+
 
 /* NÃO ALTERAR ESSA struct */
 typedef struct TCB {
