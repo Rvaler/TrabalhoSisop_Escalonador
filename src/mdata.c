@@ -47,6 +47,7 @@ TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData){
 
     if (isEmpty(ptAux)){
         tcbQueue = tcbData; //set first position
+        tcbQueue->next = NULL;
         return tcbQueue;
     } else {
         while(ptAux->next != NULL){ //cycle to the last element
@@ -54,9 +55,10 @@ TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData){
         }
 
         //set the next of the last element (a new one)
+        tcbData->next = NULL;
         ptAux->next = tcbData;
         //adjust previous of last element
-        tcbData->prev = ptAux;
+        //tcbData->prev = ptAux;
 
         return tcbQueue;
 
@@ -66,12 +68,23 @@ TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData){
 
 //remove first element from queue and update queue, the dequeued element is returned in tcbData
 TCB_t* dequeue(TCB_t *tcbQueue, TCB_t *tcbData){
+    if (tcbQueue == NULL){
+        return NULL;
+    }
+
     //recovers the first element
-    if (tcbData != NULL)
+    if (tcbQueue != NULL)
+    //if (tcbData != NULL)
         tcbData = tcbQueue;
 
-    //update queue
+    printf("\ntid da thread running dentro da func dequeue: %i", tcbData->tid);
+   //update queue
     tcbQueue = tcbQueue->next;
+
+    //if queue is now empty (was of only one element before) there is no need to update prev
+    if(tcbQueue == NULL)
+        return NULL;
+
     //removes reference to previous, as it no longer exists.
     tcbQueue->prev = NULL;
 

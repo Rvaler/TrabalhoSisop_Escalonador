@@ -7,17 +7,17 @@
 
 1428711433 thread.h"
 
-1428960495 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mdata.h
+1428970950 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mdata.h
 	<ucontext.h>
 
 1428774900 h>
 
-1428961391 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mthread.h
+1428961968 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mthread.h
 	"mdata.h"
 
 1428775519 
 
-1428961400 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
+1428978201 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/mdata.h"
@@ -25,7 +25,7 @@
 
 1428775648 e/mthread.h"
 
-1428959773 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
+1428978515 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
 	"../include/mthread.h"
 	"../include/mdata.h"
 	<ucontext.h>
@@ -57,7 +57,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1428868581 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mdata.c
+1428978571 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mdata.c
 	"../include/mthread.h"
 	"../include/mdata.h"
 	<stdio.h>
