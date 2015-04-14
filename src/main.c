@@ -18,13 +18,14 @@ int main(int argc, char *argv[])
 {
     int id0, id1, id2, id3, id4;
     void* i = NULL;
+    createMainThread();
     id0 = mcreate(1, func0, (void *)&i);
     id1 = mcreate(2, func1, (void *)&i);
     id2 = mcreate(1, func1, (void *)&i);
 
     id3 = mcreate(1, func1, (void *)&i);
     id4 = mcreate(1, func1, (void *)&i);
-    FuncaoParaTeste();
+    //FuncaoParaTeste();
     myield();
     //int teste = mcreate(2, func0, (void *)&i);
     printf("\nid0 = %i", id0);

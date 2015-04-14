@@ -76,6 +76,8 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
     if (tcbQueue != NULL)
     //if (tcbData != NULL)
         *tcbData = tcbQueue;
+        (*tcbData)->prev = NULL;
+        (*tcbData)->next = NULL;
 
     printf("\ntid da thread running dentro da func dequeue: %i\n", (*tcbData)->tid);
    //update queue

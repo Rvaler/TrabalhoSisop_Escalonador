@@ -7,7 +7,7 @@
 
 1428711433 thread.h"
 
-1428970950 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mdata.h
+1429030216 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mdata.h
 	<ucontext.h>
 
 1428863886 h>
@@ -17,7 +17,7 @@
 
 1428978571 
 
-1428978201 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
+1429040679 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/mdata.h"
@@ -25,41 +25,10 @@
 
 1428863619 e/mthread.h"
 
-1428978515 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
+1429041345 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
 	"../include/mthread.h"
 	"../include/mdata.h"
 	<ucontext.h>
-	<stdio.h>
-	<stdlib.h>
-
-1428863619 source:/home/aluno/Desktop/code/src/main.c
-	<stdio.h>
-	<stdlib.h>
-	"../include/mdata.h"
-	"../include/mthread.h"
-
-1428863886 /home/aluno/Desktop/code/include/mdata.h
-	<ucontext.h>
-
-1428848723 /home/aluno/Desktop/code/include/mthread.h
-	"mdata.h"
-
-1428862755 source:/home/aluno/Desktop/code/src/mdata.c
-	"../include/mthread.h"
-	"../include/mdata.h"
-	<stdio.h>
-	<stdlib.h>
-
-1428864250 source:/home/aluno/Desktop/code/src/mthread.c
-	"../include/mthread.h"
-	"../include/mdata.h"
-	<ucontext.h>
-	<stdio.h>
-	<stdlib.h>
-
-1428978571 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mdata.c
-	"../include/mthread.h"
-	"../include/mdata.h"
 	<stdio.h>
 	<stdlib.h>
 
@@ -68,12 +37,28 @@
 	<stdlib.h>
 	"../include/mdata.h"
 	"../include/mthread.h"
+	<stdio.h>
+	<stdlib.h>
+	"../include/mdata.h"
+	"../include/mthread.h"
 
 1428981165 /home/aluno/Desktop/code/include/mdata.h
+	<ucontext.h>
 	<ucontext.h>
 
 1428973414 /home/aluno/Desktop/code/include/mthread.h
 	"mdata.h"
+	"mdata.h"
+
+1428981318 source:/home/aluno/Desktop/code/src/mdata.c
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<stdio.h>
+	<stdlib.h>
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<stdio.h>
+	<stdlib.h>
 
 1428981414 source:/home/aluno/Desktop/code/src/mthread.c
 	"../include/mthread.h"
@@ -81,8 +66,13 @@
 	<ucontext.h>
 	<stdio.h>
 	<stdlib.h>
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<ucontext.h>
+	<stdio.h>
+	<stdlib.h>
 
-1428981318 source:/home/aluno/Desktop/code/src/mdata.c
+1429041790 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mdata.c
 	"../include/mthread.h"
 	"../include/mdata.h"
 	<stdio.h>

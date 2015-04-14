@@ -6,9 +6,10 @@
 
 int tid = 1;                 //global var, tid of the thread
 int n_threads = 0;           //number of threads
-ucontext_t main_context; //future main_context (dont know if this is necessary)
+
 ucontext_t exit_context; //all threads, when finished, are redirected to this context
 
+TCB_t *mainThread = NULL;
 
 //initialize three priority queues:
 TCB_t* tcbQueueLow = NULL;
@@ -19,6 +20,24 @@ TCB_t* tcbQueueHigh = NULL;
 TCB_t* runningThread = NULL;
 //the last thread removed from the running state
 //TCB_t *removedFromRunning = NULL;
+/*
+typedef struct node {
+    int val;
+    struct node * next;
+} node_t;
+
+typedef struct TCB {
+	int  tid;		// identificador da thread
+	int  state;	// estado em que a thread se encontra
+					// 0: Criação; 1: Apto; 2: Execução; 3: Bloqueado e 4: Término
+	int  prio;		// prioridade da thread (0:alta; 1: média, 2:baixa)
+	ucontext_t*   context;	// contexto de execução da thread (SP, PC, GPRs e recursos)
+	struct TCB   *prev;		// ponteiro para o TCB anterior da lista
+	struct TCB   *next;		// ponteiro para o próximo TCB da lista
+} TCB_t;
+*/
+
+
 
 
 void FuncaoParaTeste(){
@@ -31,6 +50,14 @@ void FuncaoParaTeste(){
 
     printf("\nLISTA  baixa priori --------");
     printQueue(tcbQueueLow);
+
+    printf("\nLISTA  media priori --------");
+    printQueue(tcbQueueHigh);
+    printf("\nrunning thread: %i", runningThread->tid);
+    tcbQueueHigh = dequeue(tcbQueueHigh, &runningThread);
+    printf("\nrunning thread: %i", runningThread->tid);
+    printf("\nLISTA  media priori --------");
+    printQueue(tcbQueueHigh);
 
     return;
 /* TESTE YIELD
@@ -47,29 +74,64 @@ void FuncaoParaTeste(){
 }
 
 void scheduler(){
-    TCB_t *removedFromRunning = NULL;
-    removedFromRunning = runningThread;
 
-    ///verify each queue for an thread in the READY_STATE, if find, assign it to "runningThread"
-    if (tcbQueueHigh != NULL){
-        tcbQueueHigh = dequeue(tcbQueueHigh, &runningThread);
+    TCB_t *wasRunning = NULL;
+    TCB_t *choosenThread = NULL;
+    //removedFromRunning = runningThread;
+
+
+    ///verify each queue for an thread in the READY_STATE, if find, assign it to "choosenThread"
+    //if (tcbQueueHigh != NULL){
+    if(0){
+        tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
         printf("\nentrando na high");
     }else if(tcbQueueMedium != NULL){
-        tcbQueueMedium = dequeue(tcbQueueMedium, &runningThread);
+        tcbQueueMedium = dequeue(tcbQueueMedium, &choosenThread);
         printf("\nentrando na medium");
     }else if(tcbQueueLow != NULL){
-        tcbQueueLow = dequeue(tcbQueueLow, &runningThread);
+        tcbQueueLow = dequeue(tcbQueueLow, &choosenThread);
         printf("\nentrando na low");
     }
 
-    if (removedFromRunning != NULL){
-        swapcontext(removedFromRunning->context, runningThread->context);
+    printf("\nchoosen: %i", choosenThread->tid);
+    printf("\nrunning: %i", runningThread->tid);
+    wasRunning = runningThread;
+    runningThread = choosenThread;
+    printf("\nchoosen: %i", choosenThread->tid);
+    printf("\nrunning: %i", runningThread->tid);
+
+    if (wasRunning != NULL){
+        swapcontext(wasRunning->context, choosenThread->context);
         return;
     }else{
-        setcontext(runningThread->context);
+        setcontext(wasRunning->context);
+        printf("\nchoosen: %i", choosenThread->tid);
+    printf("\nrunning: %i", runningThread->tid);
         return;
     }
 
+}
+
+int createMainThread()
+{
+    mainThread = (TCB_t*) malloc(sizeof(TCB_t));
+    if (mainThread == NULL){
+        return -1;
+    }
+
+    mainThread->state = RUNNING_STATE;
+    mainThread->prio = 0;
+    mainThread->tid = 0;
+    mainThread->next = NULL;
+    mainThread->prev = NULL;
+
+    if ((mainThread->context = (ucontext_t*) malloc(sizeof(ucontext_t))) == NULL){
+        return -1;
+    }
+
+    runningThread = mainThread;
+    getcontext(mainThread->context);
+    return 0;
 }
 
 /*
@@ -122,12 +184,10 @@ int mcreate(int prio, void (*start)(void*), void * arg)
     }
 
     /// SÓ PRA TESTAR A TROCA DA THREAD QUE ESTA EXECUTANDO /// DEPOIS TIRAR
-    runningThread = newThread;
+    //runningThread = newThread;
 
 
-    //printQueueReverse(tcbQueueHigh);
-    //printf("\ntid da thread %i", tid);
-    //printf("\ntid da thread %i", newThread->tid);
+
     return newThread->tid; //identificador da thread criada
 }
 
@@ -136,33 +196,20 @@ int mcreate(int prio, void (*start)(void*), void * arg)
 ///removes the running thread and put it on its current queue
 int myield()
 {
-    //teste, retirar da lista o primeiro e colocar em executando
-    printf("\nquem esta executando: %i", runningThread->tid);
-
-    printf("\nlista LOW: ");
-    printQueue(tcbQueueLow);
-    tcbQueueLow = dequeue(tcbQueueLow, &runningThread);
-    printf("\ndeveria mudar a thread do running\n");
-    printf("\ntid da thread running fora da func dequeue: %i\n", runningThread->tid);
-    printf("\n\nlistaLOW apos ser removida primeiro elemento: \n");
-    printQueue(tcbQueueLow);
-    printf("\nquem esta executando: %i", runningThread->tid);
-
-
 
     //if there's no thread executing, error!
     if (runningThread ==  NULL)
     {
         return -1;
     }
+    //printf("\nYELD");
+    //printf("\nquem esta executando: %i", runningThread->tid);
 
-
-    printf("\n\nmedia priori --------");
-    printQueue(tcbQueueMedium);
-    TCB_t *removedFromRunning;
+    TCB_t *removedFromRunning ;
     removedFromRunning = runningThread;
     removedFromRunning->state = READY_STATE;
-
+    printQueue(tcbQueueHigh);
+    //printf("\nquem esta executando: %i", removedFromRunning->tid);
     switch(removedFromRunning->prio)
     {
         case 0: //high
@@ -175,10 +222,10 @@ int myield()
             tcbQueueLow = enqueue(tcbQueueLow, removedFromRunning);
             break;
     }
-
+    printQueue(tcbQueueHigh);
     /// HERE WE HAVE TO CALL THE SCHEDULER!!!!!
-    //scheduler();
-
+    scheduler();
+     //printf("\nquem esta executando: %i", runningThread->tid);
     //printQueueReverse(tcbQueueMedium);
     return 0;
 }
