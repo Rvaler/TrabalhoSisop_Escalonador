@@ -67,7 +67,7 @@ TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData){
 }
 
 //remove first element from queue and update queue, the dequeued element is returned in tcbData
-TCB_t* dequeue(TCB_t *tcbQueue, TCB_t *tcbData){
+TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
     if (tcbQueue == NULL){
         return NULL;
     }
@@ -75,9 +75,9 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t *tcbData){
     //recovers the first element
     if (tcbQueue != NULL)
     //if (tcbData != NULL)
-        tcbData = tcbQueue;
+        *tcbData = tcbQueue;
 
-    printf("\ntid da thread running dentro da func dequeue: %i", tcbData->tid);
+    printf("\ntid da thread running dentro da func dequeue: %i\n", (*tcbData)->tid);
    //update queue
     tcbQueue = tcbQueue->next;
 

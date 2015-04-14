@@ -52,13 +52,13 @@ void scheduler(){
 
     ///verify each queue for an thread in the READY_STATE, if find, assign it to "runningThread"
     if (tcbQueueHigh != NULL){
-        tcbQueueHigh = dequeue(tcbQueueHigh, runningThread);
+        tcbQueueHigh = dequeue(tcbQueueHigh, &runningThread);
         printf("\nentrando na high");
     }else if(tcbQueueMedium != NULL){
-        tcbQueueMedium = dequeue(tcbQueueMedium, runningThread);
+        tcbQueueMedium = dequeue(tcbQueueMedium, &runningThread);
         printf("\nentrando na medium");
     }else if(tcbQueueLow != NULL){
-        tcbQueueLow = dequeue(tcbQueueLow, runningThread);
+        tcbQueueLow = dequeue(tcbQueueLow, &runningThread);
         printf("\nentrando na low");
     }
 
@@ -143,8 +143,8 @@ int myield()
     printQueue(tcbQueueLow);
     tcbQueueLow = dequeue(tcbQueueLow, &runningThread);
     printf("\ndeveria mudar a thread do running\n");
-
-    printf("listaLOW apos ser removida primeiro elemento: \n");
+    printf("\ntid da thread running fora da func dequeue: %i\n", runningThread->tid);
+    printf("\n\nlistaLOW apos ser removida primeiro elemento: \n");
     printQueue(tcbQueueLow);
     printf("\nquem esta executando: %i", runningThread->tid);
 

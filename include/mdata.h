@@ -36,5 +36,5 @@ void printQueue(TCB_t *tcbQueue);
 void printQueueReverse(TCB_t *tcbQueue);
 int isEmpty(TCB_t *tcbQueue);
 TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData);
-TCB_t* dequeue(TCB_t *tcbQueue, TCB_t *tcbData);
+TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData);
 
