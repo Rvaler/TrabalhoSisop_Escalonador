@@ -42,22 +42,25 @@ typedef struct TCB {
 
 void FuncaoParaTeste(){
 
-    printf("\nLISTA  alta priori --------");
+    printf("LISTA  alta priori --------\n");
     printQueue(tcbQueueHigh);
 
-    printf("\nLISTA  media priori --------");
+    printf("LISTA  media priori --------\n");
     printQueue(tcbQueueMedium);
 
-    printf("\nLISTA  baixa priori --------");
+    printf("LISTA  media priori  R--------\n");
+    printQueueReverse(tcbQueueMedium);
+
+    printf("LISTA  baixa priori --------\n");
     printQueue(tcbQueueLow);
 
-    printf("\nLISTA  media priori --------");
+    /*printf("\nLISTA  media priori --------");
     printQueue(tcbQueueHigh);
     printf("\nrunning thread: %i", runningThread->tid);
     tcbQueueHigh = dequeue(tcbQueueHigh, &runningThread);
     printf("\nrunning thread: %i", runningThread->tid);
     printf("\nLISTA  media priori --------");
-    printQueue(tcbQueueHigh);
+    printQueue(tcbQueueHigh);*/
 
     return;
 /* TESTE YIELD
@@ -75,6 +78,11 @@ void FuncaoParaTeste(){
 
 void scheduler(){
 
+    //set the context so that when a thread ends, it returns to here
+    getcontext(&exit_context);
+
+
+
     TCB_t *wasRunning = NULL;
     TCB_t *choosenThread = NULL;
     //removedFromRunning = runningThread;
@@ -82,33 +90,43 @@ void scheduler(){
 
     ///verify each queue for an thread in the READY_STATE, if find, assign it to "choosenThread"
     //if (tcbQueueHigh != NULL){
+
+    FuncaoParaTeste();
     if(0){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
-        printf("\nentrando na high");
+        printf("entrando na high\n");
     }else if(tcbQueueMedium != NULL){
         tcbQueueMedium = dequeue(tcbQueueMedium, &choosenThread);
-        printf("\nentrando na medium");
+        printf("entrando na medium\n");
     }else if(tcbQueueLow != NULL){
         tcbQueueLow = dequeue(tcbQueueLow, &choosenThread);
-        printf("\nentrando na low");
+        printf("entrando na low\n");
+    }else {
+        printf("\n\n####Todas filas vazias\n");
+        //TODO
+        //o que faz quando todas listas estão vazias?
     }
+    //FuncaoParaTeste();
 
-    printf("\nchoosen: %i", choosenThread->tid);
-    printf("\nrunning: %i", runningThread->tid);
+    //printf("\nchoosen: %i", choosenThread->tid);
+    //printf("\nrunning: %i", runningThread->tid);
     wasRunning = runningThread;
     runningThread = choosenThread;
-    printf("\nchoosen: %i", choosenThread->tid);
-    printf("\nrunning: %i", runningThread->tid);
+    //printf("\nchoosen: %i", choosenThread->tid);
+    //printf("\nrunning: %i", runningThread->tid);
 
     if (wasRunning != NULL){
         swapcontext(wasRunning->context, choosenThread->context);
+
         return;
     }else{
         setcontext(wasRunning->context);
-        printf("\nchoosen: %i", choosenThread->tid);
-    printf("\nrunning: %i", runningThread->tid);
+        //printf("\nchoosen: %i", choosenThread->tid);
+    //printf("\nrunning: %i", runningThread->tid);
         return;
     }
+
+
 
 }
 
@@ -208,7 +226,7 @@ int myield()
     TCB_t *removedFromRunning ;
     removedFromRunning = runningThread;
     removedFromRunning->state = READY_STATE;
-    printQueue(tcbQueueHigh);
+    //printQueue(tcbQueueHigh);
     //printf("\nquem esta executando: %i", removedFromRunning->tid);
     switch(removedFromRunning->prio)
     {
@@ -222,7 +240,7 @@ int myield()
             tcbQueueLow = enqueue(tcbQueueLow, removedFromRunning);
             break;
     }
-    printQueue(tcbQueueHigh);
+    //printQueue(tcbQueueHigh);
     /// HERE WE HAVE TO CALL THE SCHEDULER!!!!!
     scheduler();
      //printf("\nquem esta executando: %i", runningThread->tid);

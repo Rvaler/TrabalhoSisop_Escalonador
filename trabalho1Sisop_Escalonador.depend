@@ -10,12 +10,12 @@
 1429030216 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mdata.h
 	<ucontext.h>
 
-1428863886 h>
+1428981165 h>
 
 1428961968 /home/rafael/Documents/trabalho1Sisop_Escalonador/include/mthread.h
 	"mdata.h"
 
-1428978571 
+1429041790 
 
 1429040679 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
 	<stdio.h>
@@ -23,7 +23,7 @@
 	"../include/mdata.h"
 	"../include/mthread.h"
 
-1428863619 e/mthread.h"
+1428981115 e/mthread.h"
 
 1429041345 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
 	"../include/mthread.h"
@@ -75,6 +75,31 @@
 1429041790 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mdata.c
 	"../include/mthread.h"
 	"../include/mdata.h"
+	<stdio.h>
+	<stdlib.h>
+
+1429062645 source:/home/aluno/Desktop/code/src/main.c
+	<stdio.h>
+	<stdlib.h>
+	"../include/mdata.h"
+	"../include/mthread.h"
+
+1428981165 /home/aluno/Desktop/code/include/mdata.h
+	<ucontext.h>
+
+1428973414 /home/aluno/Desktop/code/include/mthread.h
+	"mdata.h"
+
+1429064549 source:/home/aluno/Desktop/code/src/mdata.c
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<stdio.h>
+	<stdlib.h>
+
+1429064475 source:/home/aluno/Desktop/code/src/mthread.c
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<ucontext.h>
 	<stdio.h>
 	<stdlib.h>
 

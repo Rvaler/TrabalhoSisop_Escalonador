@@ -18,7 +18,7 @@ void printQueue(TCB_t *tcbQueue){
     } else {
         for (; ptAux!=NULL; ptAux=ptAux->next)
             printf(" %d \n",ptAux->tid);
-        printf("\n");
+        //printf("\n");
     }
 
 }
@@ -35,7 +35,7 @@ void printQueueReverse(TCB_t *tcbQueue){
 
         for (; ptAux!=NULL; ptAux=ptAux->prev)
             printf(" %d \n",ptAux->tid);
-        printf("\n");
+        //printf("\n");
     }
 
 }
@@ -58,7 +58,7 @@ TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData){
         tcbData->next = NULL;
         ptAux->next = tcbData;
         //adjust previous of last element
-        //tcbData->prev = ptAux;
+        tcbData->prev = ptAux;
 
         return tcbQueue;
 
@@ -74,18 +74,25 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
 
     //recovers the first element
     if (tcbQueue != NULL)
-    //if (tcbData != NULL)
         *tcbData = tcbQueue;
-        (*tcbData)->prev = NULL;
-        (*tcbData)->next = NULL;
 
-    printf("\ntid da thread running dentro da func dequeue: %i\n", (*tcbData)->tid);
-   //update queue
+    //printf("\ntid da thread running dentro da func dequeue: %i\n", (*tcbData)->tid);
+    //printf("\ntid da thread primeira: %i\n", tcbQueue->tid);
+
+
+    //update queue
     tcbQueue = tcbQueue->next;
+
+
+    //only after updating the return data, the next and prev of that returning data can be NULLED
+    (*tcbData)->prev = NULL;
+    (*tcbData)->next = NULL;
 
     //if queue is now empty (was of only one element before) there is no need to update prev
     if(tcbQueue == NULL)
         return NULL;
+    //else
+    //    printf("\ntid da thread segunda: %i\n", tcbQueue->tid);
 
     //removes reference to previous, as it no longer exists.
     tcbQueue->prev = NULL;

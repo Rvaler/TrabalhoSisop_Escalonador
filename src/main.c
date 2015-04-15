@@ -6,11 +6,12 @@
 void func0(void *arg) {
 
         printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
+
 	return;
 }
 
 void func1(){
-    printf("lala");
+    printf("lala\n");
     return;
 }
 
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
 
     id3 = mcreate(1, func1, (void *)&i);
     id4 = mcreate(1, func1, (void *)&i);
-    //FuncaoParaTeste();
+
     myield();
     //int teste = mcreate(2, func0, (void *)&i);
     printf("\nid0 = %i", id0);
