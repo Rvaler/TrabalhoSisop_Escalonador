@@ -76,12 +76,13 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
     if (tcbQueue != NULL)
     //if (tcbData != NULL)
         *tcbData = tcbQueue;
+        tcbQueue = tcbQueue->next;
         (*tcbData)->prev = NULL;
         (*tcbData)->next = NULL;
 
     printf("\ntid da thread running dentro da func dequeue: %i\n", (*tcbData)->tid);
    //update queue
-    tcbQueue = tcbQueue->next;
+
 
     //if queue is now empty (was of only one element before) there is no need to update prev
     if(tcbQueue == NULL)

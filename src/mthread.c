@@ -6,6 +6,7 @@
 
 int tid = 1;                 //global var, tid of the thread
 int n_threads = 0;           //number of threads
+int createdMain = 0;
 
 ucontext_t exit_context; //all threads, when finished, are redirected to this context
 
@@ -21,21 +22,9 @@ TCB_t* runningThread = NULL;
 //the last thread removed from the running state
 //TCB_t *removedFromRunning = NULL;
 /*
-typedef struct node {
-    int val;
-    struct node * next;
-} node_t;
 
-typedef struct TCB {
-	int  tid;		// identificador da thread
-	int  state;	// estado em que a thread se encontra
-					// 0: Criação; 1: Apto; 2: Execução; 3: Bloqueado e 4: Término
-	int  prio;		// prioridade da thread (0:alta; 1: média, 2:baixa)
-	ucontext_t*   context;	// contexto de execução da thread (SP, PC, GPRs e recursos)
-	struct TCB   *prev;		// ponteiro para o TCB anterior da lista
-	struct TCB   *next;		// ponteiro para o próximo TCB da lista
-} TCB_t;
-*/
+
+
 
 
 
@@ -69,17 +58,16 @@ void FuncaoParaTeste(){
     myield();
     printQueue(tcbQueueHigh);
     return;
-*/
+
 
 }
-
+*/
 void scheduler(){
-
+    printf("\n ----- CHAMADO SCHEDULER");
     TCB_t *wasRunning = NULL;
     TCB_t *choosenThread = NULL;
     //removedFromRunning = runningThread;
-
-
+    printQueue(tcbQueueMedium);
     ///verify each queue for an thread in the READY_STATE, if find, assign it to "choosenThread"
     //if (tcbQueueHigh != NULL){
     if(0){
@@ -92,7 +80,7 @@ void scheduler(){
         tcbQueueLow = dequeue(tcbQueueLow, &choosenThread);
         printf("\nentrando na low");
     }
-
+    printQueue(tcbQueueMedium);
     printf("\nchoosen: %i", choosenThread->tid);
     printf("\nrunning: %i", runningThread->tid);
     wasRunning = runningThread;
@@ -106,7 +94,7 @@ void scheduler(){
     }else{
         setcontext(wasRunning->context);
         printf("\nchoosen: %i", choosenThread->tid);
-    printf("\nrunning: %i", runningThread->tid);
+        printf("\nrunning: %i", runningThread->tid);
         return;
     }
 
@@ -131,6 +119,7 @@ int createMainThread()
 
     runningThread = mainThread;
     getcontext(mainThread->context);
+    createdMain = 1;
     return 0;
 }
 
@@ -139,6 +128,7 @@ int createMainThread()
 */
 int mcreate(int prio, void (*start)(void*), void * arg)
 {
+
     TCB_t *newThread = (TCB_t*) malloc(sizeof(TCB_t));
     if (newThread == NULL){
         return -1;
@@ -186,7 +176,14 @@ int mcreate(int prio, void (*start)(void*), void * arg)
     /// SÓ PRA TESTAR A TROCA DA THREAD QUE ESTA EXECUTANDO /// DEPOIS TIRAR
     //runningThread = newThread;
 
-
+    if(createdMain == 0){
+        //if main thread created successful
+        if(createMainThread() == 0){
+            return newThread->tid;
+        }else{
+            return -1;
+        }
+    }
 
     return newThread->tid; //identificador da thread criada
 }
@@ -196,7 +193,7 @@ int mcreate(int prio, void (*start)(void*), void * arg)
 ///removes the running thread and put it on its current queue
 int myield()
 {
-
+    printf("\n ----- CHAMADO YIELD");
     //if there's no thread executing, error!
     if (runningThread ==  NULL)
     {
@@ -208,7 +205,9 @@ int myield()
     TCB_t *removedFromRunning ;
     removedFromRunning = runningThread;
     removedFromRunning->state = READY_STATE;
+    printf("\naqui oh, removida do running e colocada na fila high");
     printQueue(tcbQueueHigh);
+    printf("antes da remocao");
     //printf("\nquem esta executando: %i", removedFromRunning->tid);
     switch(removedFromRunning->prio)
     {

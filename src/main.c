@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 {
     int id0, id1, id2, id3, id4;
     void* i = NULL;
-    createMainThread();
+    //createMainThread();
     id0 = mcreate(1, func0, (void *)&i);
     id1 = mcreate(2, func1, (void *)&i);
     id2 = mcreate(1, func1, (void *)&i);
