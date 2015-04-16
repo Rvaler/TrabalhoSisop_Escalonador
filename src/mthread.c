@@ -6,7 +6,7 @@
 
 int tid = 1;                 //global var, tid of the thread
 int n_threads = 0;           //number of threads
-
+int createdMain = 0;
 ucontext_t exit_context; //all threads, when finished, are redirected to this context
 
 TCB_t *mainThread = NULL;
@@ -77,7 +77,7 @@ void FuncaoParaTeste(){
 }
 
 void scheduler(){
-
+    printf("\n ----- CHAMADO SCHEDULER ------------");
     //set the context so that when a thread ends, it returns to here
     getcontext(&exit_context);
 
@@ -89,9 +89,10 @@ void scheduler(){
 
 
     ///verify each queue for an thread in the READY_STATE, if find, assign it to "choosenThread"
-    //if (tcbQueueHigh != NULL){
+
 
     FuncaoParaTeste();
+    //if (tcbQueueHigh != NULL){
     if(0){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
         printf("entrando na high\n");
@@ -108,14 +109,15 @@ void scheduler(){
     }
     //FuncaoParaTeste();
 
-    //printf("\nchoosen: %i", choosenThread->tid);
-    //printf("\nrunning: %i", runningThread->tid);
+    printf("\nchoosen: %i", choosenThread->tid);
+    printf("\nrunning: %i", runningThread->tid);
     wasRunning = runningThread;
     runningThread = choosenThread;
-    //printf("\nchoosen: %i", choosenThread->tid);
-    //printf("\nrunning: %i", runningThread->tid);
+    printf("\nchoosen: %i", choosenThread->tid);
+    printf("\nrunning: %i", runningThread->tid);
 
     if (wasRunning != NULL){
+    printf("\n\nvai fazer o swapcontext");
         swapcontext(wasRunning->context, choosenThread->context);
 
         return;
@@ -149,6 +151,7 @@ int createMainThread()
 
     runningThread = mainThread;
     getcontext(mainThread->context);
+    createdMain = 1;
     return 0;
 }
 
@@ -204,6 +207,15 @@ int mcreate(int prio, void (*start)(void*), void * arg)
     /// SÓ PRA TESTAR A TROCA DA THREAD QUE ESTA EXECUTANDO /// DEPOIS TIRAR
     //runningThread = newThread;
 
+    ///creation of Main in the first time of execution
+    if(createdMain == 0){
+        //if main thread created successful
+        if(createMainThread() == 0){
+            return newThread->tid;
+        }else{
+            return -1;
+        }
+    }
 
 
     return newThread->tid; //identificador da thread criada

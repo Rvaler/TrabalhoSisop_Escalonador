@@ -17,7 +17,7 @@
 
 1429041790 
 
-1429040679 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
+1429223971 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/mdata.h"
@@ -32,65 +32,39 @@
 	<stdio.h>
 	<stdlib.h>
 
-1428981115 source:/home/aluno/Desktop/code/src/main.c
-	<stdio.h>
-	<stdlib.h>
-	"../include/mdata.h"
-	"../include/mthread.h"
-	<stdio.h>
-	<stdlib.h>
-	"../include/mdata.h"
-	"../include/mthread.h"
-
-1428981165 /home/aluno/Desktop/code/include/mdata.h
-	<ucontext.h>
-	<ucontext.h>
-
-1428973414 /home/aluno/Desktop/code/include/mthread.h
-	"mdata.h"
-	"mdata.h"
-
-1428981318 source:/home/aluno/Desktop/code/src/mdata.c
-	"../include/mthread.h"
-	"../include/mdata.h"
-	<stdio.h>
-	<stdlib.h>
-	"../include/mthread.h"
-	"../include/mdata.h"
-	<stdio.h>
-	<stdlib.h>
-
-1428981414 source:/home/aluno/Desktop/code/src/mthread.c
-	"../include/mthread.h"
-	"../include/mdata.h"
-	<ucontext.h>
-	<stdio.h>
-	<stdlib.h>
-	"../include/mthread.h"
-	"../include/mdata.h"
-	<ucontext.h>
-	<stdio.h>
-	<stdlib.h>
-
-1429041790 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mdata.c
-	"../include/mthread.h"
-	"../include/mdata.h"
-	<stdio.h>
-	<stdlib.h>
-
 1429062645 source:/home/aluno/Desktop/code/src/main.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/mdata.h"
 	"../include/mthread.h"
+	<stdio.h>
+	<stdlib.h>
+	"../include/mdata.h"
+	"../include/mthread.h"
+	<stdio.h>
+	<stdlib.h>
+	"../include/mdata.h"
+	"../include/mthread.h"
 
 1428981165 /home/aluno/Desktop/code/include/mdata.h
+	<ucontext.h>
+	<ucontext.h>
 	<ucontext.h>
 
 1428973414 /home/aluno/Desktop/code/include/mthread.h
 	"mdata.h"
+	"mdata.h"
+	"mdata.h"
 
 1429064549 source:/home/aluno/Desktop/code/src/mdata.c
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<stdio.h>
+	<stdlib.h>
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<stdio.h>
+	<stdlib.h>
 	"../include/mthread.h"
 	"../include/mdata.h"
 	<stdio.h>
@@ -100,6 +74,22 @@
 	"../include/mthread.h"
 	"../include/mdata.h"
 	<ucontext.h>
+	<stdio.h>
+	<stdlib.h>
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<ucontext.h>
+	<stdio.h>
+	<stdlib.h>
+	"../include/mthread.h"
+	"../include/mdata.h"
+	<ucontext.h>
+	<stdio.h>
+	<stdlib.h>
+
+1429223745 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mdata.c
+	"../include/mthread.h"
+	"../include/mdata.h"
 	<stdio.h>
 	<stdlib.h>
 
