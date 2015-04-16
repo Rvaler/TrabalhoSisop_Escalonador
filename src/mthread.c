@@ -92,6 +92,7 @@ void scheduler(){
 
 
     FuncaoParaTeste();
+    ///esse if tem que ser retirado na entrega
     //if (tcbQueueHigh != NULL){
     if(0){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
