@@ -9,10 +9,34 @@ void func0(void *arg) {
 	return;
 }
 
+void func1(void *arg) {
+
+        printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
+	return;
+}
+
+void func2(void *arg) {
+
+        printf("Eu sou a thread ID2 imprimindo %d\n", *((int *)arg));
+	return;
+}
+
+void func3(void *arg) {
+
+        printf("Eu sou a thread ID3 imprimindo %d\n", *((int *)arg));
+	return;
+}
+
+void func4(void *arg) {
+
+        printf("Eu sou a thread ID4 imprimindo %d\n", *((int *)arg));
+	return;
+}
+/*
 void func1(){
     printf("lala");
     return;
-}
+}*/
 
 int main(int argc, char *argv[])
 {
@@ -21,10 +45,10 @@ int main(int argc, char *argv[])
     //createMainThread();
     id0 = mcreate(1, func0, (void *)&i);
     id1 = mcreate(2, func1, (void *)&i);
-    id2 = mcreate(1, func1, (void *)&i);
+    id2 = mcreate(1, func2, (void *)&i);
 
-    id3 = mcreate(1, func1, (void *)&i);
-    id4 = mcreate(1, func1, (void *)&i);
+    id3 = mcreate(1, func3, (void *)&i);
+    id4 = mcreate(1, func4, (void *)&i);
     //FuncaoParaTeste();
     myield();
     //int teste = mcreate(2, func0, (void *)&i);

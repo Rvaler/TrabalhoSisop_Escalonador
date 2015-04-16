@@ -83,12 +83,15 @@ void scheduler(){
     printQueue(tcbQueueMedium);
     printf("\nchoosen: %i", choosenThread->tid);
     printf("\nrunning: %i", runningThread->tid);
+    //wasRunning = runningThread;
+    //runningThread = choosenThread;
     wasRunning = runningThread;
     runningThread = choosenThread;
     printf("\nchoosen: %i", choosenThread->tid);
     printf("\nrunning: %i", runningThread->tid);
 
     if (wasRunning != NULL){
+        printf("\n\nvai fazer o swapcontext");
         swapcontext(wasRunning->context, choosenThread->context);
         return;
     }else{
