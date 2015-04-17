@@ -47,10 +47,10 @@ int main(int argc, char *argv[])
     void* i = NULL;
 
     id0 = mcreate(1, func0, (void *)&i);
-    myield();
+
     id1 = mcreate(2, func1, (void *)&i);
     id2 = mcreate(1, func2, (void *)&i);
-
+    myield();
     id3 = mcreate(1, func3, (void *)&i);
     id4 = mcreate(1, func4, (void *)&i);
 

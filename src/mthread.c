@@ -41,7 +41,14 @@ typedef struct TCB {
 
 void killthread()
 {
-    printf("terminou thread");
+    printf("\nterminou thread com tid: ");
+    printf("%i", runningThread->tid);
+
+    free(runningThread->context->uc_stack.ss_sp);
+    free(runningThread->context);
+    free(runningThread);
+    runningThread = NULL;
+    scheduler();
     ///aqui mata a thread e chama o escalonador
 }
 
@@ -101,13 +108,13 @@ void scheduler(){
     //if (tcbQueueHigh != NULL){
     if(0){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
-        printf("entrando na lista high\n");
+        printf("\nentrando na lista high\n");
     }else if(tcbQueueMedium != NULL){
         tcbQueueMedium = dequeue(tcbQueueMedium, &choosenThread);
-        printf("entrando na lista medium\n");
+        printf("\nentrando na lista medium\n");
     }else if(tcbQueueLow != NULL){
         tcbQueueLow = dequeue(tcbQueueLow, &choosenThread);
-        printf("entrando na lista low\n");
+        printf("\nentrando na lista low\n");
     }else {
         printf("\n\n####Todas filas vazias\n");
         //TODO
@@ -115,20 +122,21 @@ void scheduler(){
     }
     //FuncaoParaTeste();
 
-    printf("\nchoosen: %i", choosenThread->tid);
-    printf("\nrunning: %i", runningThread->tid);
+    //printf("\nchoosen: %i", choosenThread->tid);
+    //printf("\nrunning: %i", runningThread->tid);
     wasRunning = runningThread;
     runningThread = choosenThread;
-    printf("\nchoosen: %i", choosenThread->tid);
-    printf("\nrunning: %i", runningThread->tid);
+    //printf("\nchoosen: %i", choosenThread->tid);
+    //printf("\nrunning: %i", runningThread->tid);
 
     if (wasRunning != NULL){
-        printf("\n\nvai fazer o swapcontext");
+        printf("\n\nescaloonador vai fazer o swapcontext");
         swapcontext(wasRunning->context, choosenThread->context);
 
         return;
     }else{
-        setcontext(wasRunning->context);
+        printf("\n\n escalonador vai setar o contexto");
+        setcontext(choosenThread->context);
         //printf("\nchoosen: %i", choosenThread->tid);
     //printf("\nrunning: %i", runningThread->tid);
         return;
