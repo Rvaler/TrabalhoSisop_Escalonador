@@ -7,7 +7,7 @@
 int tid = 1;                 //global var, tid of the thread
 int n_threads = 0;           //number of threads
 int createdMain = 0;
-ucontext_t exit_context; //all threads, when finished, are redirected to this context
+ucontext_t* exit_context = NULL; //all threads, when finished, are redirected to this context
 
 TCB_t *mainThread = NULL;
 
@@ -15,6 +15,8 @@ TCB_t *mainThread = NULL;
 TCB_t* tcbQueueLow = NULL;
 TCB_t* tcbQueueMedium = NULL;
 TCB_t* tcbQueueHigh = NULL;
+
+TCB_t* blockedQueue = NULL;
 
 //current thread running in the core
 TCB_t* runningThread = NULL;
@@ -37,21 +39,24 @@ typedef struct TCB {
 } TCB_t;
 */
 
-
-
+void killthread()
+{
+    printf("terminou thread");
+    ///aqui mata a thread e chama o escalonador
+}
 
 void FuncaoParaTeste(){
 
-    printf("LISTA  alta priori --------\n");
+    printf("\nLISTA  alta priori --------\n");
     printQueue(tcbQueueHigh);
 
-    printf("LISTA  media priori --------\n");
+    printf("\nLISTA  media priori --------\n");
     printQueue(tcbQueueMedium);
 
-    printf("LISTA  media priori  R--------\n");
+    printf("\nLISTA  media priori  R--------\n");
     printQueueReverse(tcbQueueMedium);
 
-    printf("LISTA  baixa priori --------\n");
+    printf("\nLISTA  baixa priori --------\n");
     printQueue(tcbQueueLow);
 
     /*printf("\nLISTA  media priori --------");
@@ -77,9 +82,9 @@ void FuncaoParaTeste(){
 }
 
 void scheduler(){
-    printf("\n ----- CHAMADO SCHEDULER ------------");
+    printf("\n ----- CHAMADO ESCALONADOR ------------");
     //set the context so that when a thread ends, it returns to here
-    getcontext(&exit_context);
+    ///getcontext(&exit_context);
 
 
 
@@ -96,13 +101,13 @@ void scheduler(){
     //if (tcbQueueHigh != NULL){
     if(0){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
-        printf("entrando na high\n");
+        printf("entrando na lista high\n");
     }else if(tcbQueueMedium != NULL){
         tcbQueueMedium = dequeue(tcbQueueMedium, &choosenThread);
-        printf("entrando na medium\n");
+        printf("entrando na lista medium\n");
     }else if(tcbQueueLow != NULL){
         tcbQueueLow = dequeue(tcbQueueLow, &choosenThread);
-        printf("entrando na low\n");
+        printf("entrando na lista low\n");
     }else {
         printf("\n\n####Todas filas vazias\n");
         //TODO
@@ -118,7 +123,7 @@ void scheduler(){
     printf("\nrunning: %i", runningThread->tid);
 
     if (wasRunning != NULL){
-    printf("\n\nvai fazer o swapcontext");
+        printf("\n\nvai fazer o swapcontext");
         swapcontext(wasRunning->context, choosenThread->context);
 
         return;
@@ -133,8 +138,20 @@ void scheduler(){
 
 }
 
+//Parâmetros
+//  tid: identificador da thread cujo término está sendo aguardado.
+//Retorno:
+//  Retorna o valor 0 (zero, se a função foi realizada com sucesso; caso contrário,  retorna -1.
+
+int mwait(int tid){
+
+
+}
+
+
 int createMainThread()
 {
+
     mainThread = (TCB_t*) malloc(sizeof(TCB_t));
     if (mainThread == NULL){
         return -1;
@@ -153,6 +170,7 @@ int createMainThread()
     runningThread = mainThread;
     getcontext(mainThread->context);
     createdMain = 1;
+    printf("\n---CRIADA MAIN THREAD----\n");
     return 0;
 }
 
@@ -166,6 +184,24 @@ int mcreate(int prio, void (*start)(void*), void * arg)
         return -1;
     }
 
+    //creates the exit_Context
+    if (exit_context == NULL)
+    {
+        printf("criou exitcontext");
+        exit_context = (ucontext_t*) malloc(sizeof(ucontext_t));
+        if (exit_context== NULL)
+            return -1;
+        exit_context->uc_link = NULL;
+        exit_context->uc_stack.ss_sp = (char*) malloc(SIGSTKSZ);
+        exit_context->uc_stack.ss_size = SIGSTKSZ;
+
+        getcontext(exit_context);
+        makecontext(exit_context, (void (*)(void)) killthread, 0, NULL);
+    }
+
+
+
+
     newThread->tid = tid++;
     newThread->state = READY_STATE;
     newThread->context = (ucontext_t*) malloc(sizeof(ucontext_t));
@@ -175,7 +211,7 @@ int mcreate(int prio, void (*start)(void*), void * arg)
 
     getcontext(newThread->context);
 
-    newThread->context->uc_link = &exit_context;
+    newThread->context->uc_link = exit_context;
     newThread->context->uc_stack.ss_sp = (char*) malloc(SIGSTKSZ);
     if(newThread->context->uc_stack.ss_sp == NULL){
         return -1;
@@ -227,12 +263,13 @@ int mcreate(int prio, void (*start)(void*), void * arg)
 ///removes the running thread and put it on its current queue
 int myield()
 {
-
+    printf("\n ----- YIELD ------------");
     //if there's no thread executing, error!
     if (runningThread ==  NULL)
     {
         return -1;
     }
+    printf("\n quem chamou YIELD: %i\n", runningThread->tid);
     //printf("\nYELD");
     //printf("\nquem esta executando: %i", runningThread->tid);
 
@@ -262,10 +299,7 @@ int myield()
 }
 
 
-void killthread()
-{
-    printf("terminou thread");
-}
+
 
 
 
