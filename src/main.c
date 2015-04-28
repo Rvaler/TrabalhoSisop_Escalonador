@@ -3,16 +3,12 @@
 #include "../include/mdata.h"
 #include "../include/mthread.h"
 
-void func0(void *arg) {
-
-        printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
-
-	return;
-}
+mmutex_t mutex;
 
 void func1(void *arg) {
 
         printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
+
 	return;
 }
 
@@ -34,30 +30,33 @@ void func4(void *arg) {
 	return;
 }
 
-/*
-void func1(){
-    printf("lala\n");
-    return;
+void func5(void *arg) {
+
+        printf("Eu sou a thread ID5 imprimindo %d\n", *((int *)arg));
+	return;
 }
-*/
+
+
 
 int main(int argc, char *argv[])
 {
-    int id0, id1, id2, id3, id4;
+    int id1, id2, id3, id4, id5;
     void* i = NULL;
 
-    id0 = mcreate(1, func0, (void *)&i);
-
-    id1 = mcreate(2, func1, (void *)&i);
-    id2 = mcreate(1, func2, (void *)&i);
+    id1 = mcreate(MEDIUM_PRIORITY, func1, (void *)&i);
+    //mlock(&mutex);
+    id2 = mcreate(LOW_PRIORITY, func2, (void *)&i);
+    mlock(&mutex);
+    mlock(&mutex);
+    id3 = mcreate(MEDIUM_PRIORITY, func3, (void *)&i);
     myield();
-    id3 = mcreate(1, func3, (void *)&i);
-    id4 = mcreate(1, func4, (void *)&i);
+    id4 = mcreate(MEDIUM_PRIORITY, func4, (void *)&i);
+    id5 = mcreate(MEDIUM_PRIORITY, func5, (void *)&i);
 
     myield();
     //int teste = mcreate(2, func0, (void *)&i);
-    printf("\nid0 = %i", id0);
-    printf("\nid1 = %i", id1);
+    printf("\nid0 = %i", id1);
     printf("\nid1 = %i", id2);
+    printf("\nid1 = %i", id3);
     return 0;
 }

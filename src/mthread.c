@@ -60,9 +60,6 @@ void FuncaoParaTeste(){
     printf("\nLISTA  media priori --------\n");
     printQueue(tcbQueueMedium);
 
-    printf("\nLISTA  media priori  R--------\n");
-    printQueueReverse(tcbQueueMedium);
-
     printf("\nLISTA  baixa priori --------\n");
     printQueue(tcbQueueLow);
 
@@ -105,8 +102,8 @@ void scheduler(){
 
     FuncaoParaTeste();
     ///esse if tem que ser retirado na entrega
-    //if (tcbQueueHigh != NULL){
-    if(0){
+    if (tcbQueueHigh != NULL){
+    //if(0){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
         printf("\nentrando na lista high\n");
     }else if(tcbQueueMedium != NULL){
@@ -324,7 +321,8 @@ int mmutex_init(mmutex_t *mtx){
 
 int mlock (mmutex_t *mtx){
 
-    printf("\n\n-----CHAMADO O MLCOK------\n\n");
+    printf("\n\n-----CHAMADO O MLOCK------\n\n");
+    FuncaoParaTeste();
     if (mtx->flag == FREE_MUTEX){
         printf("\nMUTEX TAVA LIVRE\n");
         mtx->flag = OCCUPIED_MUTEX;
