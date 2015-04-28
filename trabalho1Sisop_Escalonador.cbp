@@ -36,6 +36,9 @@
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/mdata.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/mthread.c">
 			<Option compilerVar="CC" />
 			<Option target="Debug" />

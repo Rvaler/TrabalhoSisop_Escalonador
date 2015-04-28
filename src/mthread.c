@@ -307,6 +307,44 @@ int myield()
 }
 
 
+int mmutex_init(mmutex_t *mtx){
+
+    if(mtx){
+            printf("criou mutex");
+        mtx->flag = FREE_MUTEX;
+        mtx->first = NULL;
+        mtx->last = NULL;
+        return 0;
+    }
+
+    printf("nao criou mutex");
+    return -1;
+}
+
+
+int mlock (mmutex_t *mtx){
+
+    printf("\n\n-----CHAMADO O MLCOK------\n\n");
+    if (mtx->flag == FREE_MUTEX){
+        printf("\nMUTEX TAVA LIVRE\n");
+        mtx->flag = OCCUPIED_MUTEX;
+        return 0;
+
+    }else{
+
+        do
+        {
+            printf("\nMUTEX TAVA OCUPADO\n");
+            runningThread->state = BLOCKED_STATE;
+            enqueue(runningThread, &mtx->first);
+            mtx->last = runningThread;
+            scheduler();
+        }while(mtx->flag == OCCUPIED_MUTEX);
+        mtx->flag = OCCUPIED_MUTEX;
+        return 0;
+    }
+}
+
 
 
 

@@ -17,6 +17,13 @@
 #define BLOCKED_STATE 3
 #define END_STATE 4
 
+#define HIGH_PRIORITY 0
+#define MEDIUM_PRIORITY 1
+#define LOW_PRIORITY 2
+
+#define FREE_MUTEX 0
+#define OCCUPIED_MUTEX 1
+
 
 /* NÃO ALTERAR ESSA struct */
 typedef struct TCB {
