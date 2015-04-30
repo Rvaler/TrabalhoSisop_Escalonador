@@ -71,18 +71,12 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
     if (tcbQueue == NULL){
         return NULL;
     }
-
     //recovers the first element
     if (tcbQueue != NULL)
         *tcbData = tcbQueue;
 
-    //printf("\ntid da thread running dentro da func dequeue: %i\n", (*tcbData)->tid);
-    //printf("\ntid da thread primeira: %i\n", tcbQueue->tid);
-
-
     //update queue
     tcbQueue = tcbQueue->next;
-
 
     //only after updating the return data, the next and prev of that returning data can be NULLED
     (*tcbData)->prev = NULL;
@@ -91,13 +85,83 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
     //if queue is now empty (was of only one element before) there is no need to update prev
     if(tcbQueue == NULL)
         return NULL;
-    //else
-    //    printf("\ntid da thread segunda: %i\n", tcbQueue->tid);
 
     //removes reference to previous, as it no longer exists.
     tcbQueue->prev = NULL;
 
-
     //return pointer to queue
     return tcbQueue;
 }
+
+waitingStruct_t* pushThread(waitingStruct_t *wqueue, waitingStruct_t *wdata){
+    if(wqueue == NULL){
+        wqueue = wdata;
+
+        wqueue->next = NULL;
+        return wqueue;
+    }else{
+        waitingStruct_t* ptAux = wqueue;
+
+        while(ptAux->next != NULL){
+            ptAux = ptAux->next;
+        }
+
+        wdata->next = NULL;
+        ptAux->next = wdata;
+        return wqueue;
+    }
+}
+
+void printWaitingList(waitingStruct_t *wqueue){
+    waitingStruct_t* ptAux = wqueue;        //pointer to go trough queue
+
+    if (wqueue == NULL){
+        printf("\nEmpty Waiting List\n");
+    } else {
+        for (; ptAux!=NULL; ptAux=ptAux->next)
+            printf("\nwaitedThread: %d \n",ptAux->waitedThreadTid);
+            TCB_t *teste = ptAux->blockedThread;
+            printf("\nblockedThread: %d \n",teste->tid);
+        //printf("\n");
+    }
+
+}
+
+/*
+waitingStruct_t* pushThread(waitingStruct_t *wqueue, waitingStruct_t *wdata){
+    waitingStruct_t* ptAux = wqueue;
+
+    if (wqueue == NULL){
+        wqueue = wdata;
+        wqueue->next = NULL;
+        return wqueue;
+    }else{
+        while(ptAux->next != NULL){
+            ptAux = ptAux->next;
+        }
+
+        wdata->next = NULL;
+
+        ptAux->next = wdata;
+
+        return wqueue;
+    }
+}
+
+void printWaitingList(waitingStruct_t *wqueue){
+    waitingStruct_t* ptAux = wqueue;        //pointer to go trough queue
+
+    if (wqueue == NULL){
+        printf("Empty Waiting List\n");
+    } else {
+        for (; ptAux!=NULL; ptAux=ptAux->next)
+            printf("\nwaitedThread: %d \n",ptAux->waitedThreadTid);
+            printf("\nblockedThread: %d \n",ptAux->blockedThreadTid);
+        //printf("\n");
+    }
+
+}
+*/
+
+
+

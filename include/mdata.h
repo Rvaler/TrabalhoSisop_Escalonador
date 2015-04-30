@@ -36,6 +36,14 @@ typedef struct TCB {
 	struct TCB   *next;		// ponteiro para o próximo TCB da lista
 } TCB_t;
 
+
+// Struct responsable to implement the waiting threads
+typedef struct waitingStruct {
+    int waitedThreadTid;
+    struct TCB *blockedThread;
+    struct waitingStruct *next;
+} waitingStruct_t;
+
 #endif
 
 
@@ -44,4 +52,6 @@ void printQueueReverse(TCB_t *tcbQueue);
 int isEmpty(TCB_t *tcbQueue);
 TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData);
 TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData);
+
+waitingStruct_t* pushThread(waitingStruct_t *wqueue, waitingStruct_t *wdata);
 

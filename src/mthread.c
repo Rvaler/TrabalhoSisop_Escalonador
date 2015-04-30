@@ -17,27 +17,16 @@ TCB_t* tcbQueueMedium = NULL;
 TCB_t* tcbQueueHigh = NULL;
 
 TCB_t* blockedQueue = NULL;
+TCB_t* blockedByWaiting = NULL;
 
 //current thread running in the core
 TCB_t* runningThread = NULL;
 //the last thread removed from the running state
 //TCB_t *removedFromRunning = NULL;
-/*
-typedef struct node {
-    int val;
-    struct node * next;
-} node_t;
 
-typedef struct TCB {
-	int  tid;		// identificador da thread
-	int  state;	// estado em que a thread se encontra
-					// 0: Criação; 1: Apto; 2: Execução; 3: Bloqueado e 4: Término
-	int  prio;		// prioridade da thread (0:alta; 1: média, 2:baixa)
-	ucontext_t*   context;	// contexto de execução da thread (SP, PC, GPRs e recursos)
-	struct TCB   *prev;		// ponteiro para o TCB anterior da lista
-	struct TCB   *next;		// ponteiro para o próximo TCB da lista
-} TCB_t;
-*/
+
+waitingStruct_t* waitingList = NULL;
+
 
 void killthread()
 {
@@ -150,8 +139,92 @@ void scheduler(){
 
 int mwait(int tid){
 
+    printf("\n --- CHAMADO O WAIT --- \n");
+    printf("\nquem ta rodando: %i", runningThread->tid);
+    printQueue(tcbQueueHigh);
+    //printWaitingList(waitingList);
+    TCB_t* waitingThisThread = NULL;
+    TCB_t* auxiliarTCB = NULL;
+    if (runningThread ==  NULL)
+    {
+        printf("\nfaio");
+        return -1;
+    }else{
 
+        if(tcbQueueHigh != NULL){
+            printf("\nhigh");
+            auxiliarTCB = tcbQueueHigh;
+            while(auxiliarTCB != NULL){
+
+                if(auxiliarTCB->tid == tid){
+                    waitingThisThread = auxiliarTCB;
+
+                    break;
+                }else{
+                    auxiliarTCB = auxiliarTCB->next;
+                }
+            }
+        }
+
+        if(tcbQueueMedium != NULL){
+            printf("\nmedium");
+            auxiliarTCB = tcbQueueMedium;
+            while(auxiliarTCB != NULL){
+
+                if(auxiliarTCB->tid == tid){
+                    waitingThisThread = auxiliarTCB;
+                    break;
+                }else{
+                    auxiliarTCB = auxiliarTCB->next;
+                }
+            }
+        }
+
+
+        if(tcbQueueLow != NULL){
+            printf("\nlow");
+            auxiliarTCB = tcbQueueLow;
+            while(auxiliarTCB != NULL){
+
+                if(auxiliarTCB->tid == tid){
+                    waitingThisThread = auxiliarTCB;
+                    break;
+                }else{
+                    auxiliarTCB = auxiliarTCB->next;
+                }
+            }
+        }
+
+        if(waitingThisThread == NULL){
+        /// não achou na lista alguma thread com esse tid, erro!
+            printf("\n\n nao achou a thread!");
+            return -1;
+        }
+
+    }
+
+    TCB_t *removedFromRunning ;
+    removedFromRunning = runningThread;
+    removedFromRunning->state = BLOCKED_STATE;
+
+    waitingStruct_t *newBlockedThread = (waitingStruct_t*) malloc(sizeof(waitingStruct_t));
+    if(newBlockedThread == NULL){
+        return -1;
+    }
+    printWaitingList(waitingList);
+    newBlockedThread->waitedThreadTid = tid;
+    newBlockedThread->blockedThread = removedFromRunning;
+    waitingList = pushThread(waitingList, newBlockedThread);
+    printWaitingList(waitingList);
+
+    //waitingStruct_t *newWaitingThread = (waitingStruct_t*) malloc(sizeof(waitingStruct_t));
+    //newWaitingThread->waitedThreadTid = tid;
+    //newWaitingThread->blockedThreadTid = auxiliarTCB->tid;
+    //waitingList = pushThread(waitingList, &newWaitingThread);
+
+    //printWaitingList(waitingList);
 }
+
 
 
 int createMainThread()
@@ -341,6 +414,33 @@ int mlock (mmutex_t *mtx){
         mtx->flag = OCCUPIED_MUTEX;
         return 0;
     }
+}
+
+int munlock (mmutex_t *mtx){
+
+    printf("\n\n-----CHAMADO O MUNLOCK------\n\n");
+    if (mtx->first != NULL) {
+        TCB_t *firstOfMutex = NULL;
+        mtx->first = dequeue(mtx->first, &firstOfMutex);
+        firstOfMutex->state = READY_STATE;
+
+        switch(firstOfMutex->prio)
+        {
+            case 0: //high
+                tcbQueueHigh = enqueue(tcbQueueHigh, firstOfMutex);
+                break;
+            case 1:
+                tcbQueueMedium = enqueue(tcbQueueMedium, firstOfMutex);
+                break;
+            case 2:
+                tcbQueueLow = enqueue(tcbQueueLow, firstOfMutex);
+                break;
+        }
+    }
+
+    mtx->flag = FREE_MUTEX;
+    return 0;
+
 }
 
 
