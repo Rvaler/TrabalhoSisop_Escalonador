@@ -238,7 +238,7 @@ int createMainThread()
 /*
     Creation of a new Thread and put it on ready state
 */
-int mcreate(int prio, void (*start)(void*), void * arg)
+int mcreate(int prio, void *(*start)(void*), void * arg)
 {
     printf("\n ---- CHAMADO O MCREATE ----- \n");
 
