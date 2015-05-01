@@ -50,13 +50,13 @@ void scheduler(){
 
     if (tcbQueueHigh != NULL){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
-        printf("\nentrando na lista high\n");
+        printf("\nEscalonador entrando na lista de alta prioridade\n");
     }else if(tcbQueueMedium != NULL){
         tcbQueueMedium = dequeue(tcbQueueMedium, &choosenThread);
-        printf("\nentrando na lista medium\n");
+        printf("\nEscalonador entrando na lista de media prioridade\n");
     }else if(tcbQueueLow != NULL){
         tcbQueueLow = dequeue(tcbQueueLow, &choosenThread);
-        printf("\nentrando na lista low\n");
+        printf("\nEscalonador entrando na lista de baixa prioridade\n");
     }else {
         printf("\n\n####Todas filas vazias\n");
         ///TODO
@@ -67,12 +67,12 @@ void scheduler(){
     runningThread = choosenThread;
 
     if (wasRunning != NULL){
-        printf("\n\nEscaloonador vai fazer o swapcontext\n");
+        printf("\nEscaloonador vai fazer o swapcontext\n");
         printf("\nQuem estava rodando: %i \nQuem vai rodar: %i\n", wasRunning->tid, choosenThread->tid);
         swapcontext(wasRunning->context, choosenThread->context);
         return;
     }else{
-        printf("\n\nEscalonador vai setar o contexto");
+        printf("\nEscalonador vai setar o contexto");
         printf("\nQuem vai rodar: %i\n", choosenThread->tid);
         setcontext(choosenThread->context);
         return;
@@ -118,12 +118,22 @@ void killthread()
 
 }
 
-//Parâmetros
-//  tid: identificador da thread cujo término está sendo aguardado.
-//Retorno:
-//  Retorna o valor 0 (zero, se a função foi realizada com sucesso; caso contrário,  retorna -1.
+
+/*
+    MWAIT:
+    Thread aguarda que outra thread termine sua execução para então poder ser executada,
+    até que isso ocorra a thread que chamou mwait ficará bloqueada.
+    Parâmetros:
+        tid: identificador da thread cujo término está sendo aguardado.
+    Retorno:
+        Retorna 0 se concluída com sucesso e -1 quando concluída com erro.
+*/
 
 int mwait(int tid){
+
+    if(createdMain == 0){
+        createMainThread();
+    }
 
     printf("\n --- CHAMADO O WAIT --- \n");
     printf("\nThread que estava executando: %i", runningThread->tid);
@@ -231,12 +241,19 @@ int createMainThread()
     runningThread = mainThread;
     getcontext(mainThread->context);
     createdMain = 1;
-    printf("\n---CRIADA MAIN THREAD----\n");
+    printf("\nCriada a main thread com tid %i\n", mainThread->tid);
     return 0;
 }
 
 /*
-    Creation of a new Thread and put it on ready state
+    MCREATE:
+    Criação da thread, aloca uma TCB e a inicializa
+    Parâmetros:
+        prio: prioridade da thread criada (0: alta prioridade, 1: média prioridade, 2: baixa prioridade)
+        start: ponteiro para a função que a thread executará
+        arg: UM parâmetro que pode ser passado para a thread na sua criação.
+    Retorno:
+        Retorna 0 se concluída com sucesso e -1 quando concluída com erro.
 */
 int mcreate(int prio, void *(*start)(void*), void * arg)
 {
@@ -262,9 +279,6 @@ int mcreate(int prio, void *(*start)(void*), void * arg)
         getcontext(exit_context);
         makecontext(exit_context, (void (*)(void)) killthread, 0, NULL);
     }
-
-
-
 
     newThread->tid = tid++;
     newThread->state = READY_STATE;
@@ -292,7 +306,7 @@ int mcreate(int prio, void *(*start)(void*), void * arg)
     n_threads++;
 
     printf("\nThread com tid %i foi criada e colocada na lista de aptos\n", newThread->tid);
-    ///precisa colocar na fila de aptos aqui
+
     switch(prio){
         case 0: //high
             tcbQueueHigh = enqueue(tcbQueueHigh, newThread);
@@ -319,25 +333,35 @@ int mcreate(int prio, void *(*start)(void*), void * arg)
 }
 
 
+/*
+    MYIELD:
+    Thread libera voluntariamente a CPU, a thread que estava executando vai para a lista de aptos
+    da sua respectiva prioridade, e então após isso o escalonador é chamado.
 
-///removes the running thread and put it on its current queue
+    Retorno:
+        Retorna 0 se concluída com sucesso e -1 quando concluída com erro.
+*/
+
 int myield()
 {
+    if(createdMain == 0){
+        createMainThread();
+    }
+
     printf("\n ----- CHAMADO O YIELD ------------");
     //if there's no thread executing, error!
     if (runningThread ==  NULL)
     {
         return -1;
     }
+
     printf("\n quem chamou YIELD: %i\n", runningThread->tid);
-    //printf("\nYELD");
-    //printf("\nquem esta executando: %i", runningThread->tid);
+
 
     TCB_t *removedFromRunning ;
     removedFromRunning = runningThread;
     removedFromRunning->state = READY_STATE;
-    //printQueue(tcbQueueHigh);
-    //printf("\nquem esta executando: %i", removedFromRunning->tid);
+
     printf("\nthread com tid %i foi colocada na lista de aptos\n");
     switch(removedFromRunning->prio)
     {
@@ -351,14 +375,18 @@ int myield()
             tcbQueueLow = enqueue(tcbQueueLow, removedFromRunning);
             break;
     }
-    //printQueue(tcbQueueHigh);
-    /// HERE WE HAVE TO CALL THE SCHEDULER!!!!!
     scheduler();
-     //printf("\nquem esta executando: %i", runningThread->tid);
-    //printQueueReverse(tcbQueueMedium);
     return 0;
 }
 
+/*
+    MMUTEX_INIT:
+    Inicializa uma variável do tipo mmutex_t e coloca-o em estado livre, podendo ser usado.
+    Parâmetros:
+        mtx: ponteiro para uma variável do tipo mmutex_t.
+    Retorno:
+        Retorna 0 se concluída com sucesso e -1 quando concluída com erro.
+*/
 
 int mmutex_init(mmutex_t *mtx){
     printf("\n\n-----CHAMADO O M_INIT ------\n\n");
@@ -375,7 +403,20 @@ int mmutex_init(mmutex_t *mtx){
 }
 
 
+/*
+    MLOCK:
+    Indica a entrada de uma thread na seção crítica, bloqueando o mutex para que outras threads
+    não possam entrar.
+    Parâmetros:
+        mtx: ponteiro para uma variável do tipo mmutex_t.
+    Retorno:
+        Retorna 0 se concluída com sucesso e -1 quando concluída com erro.
+*/
 int mlock (mmutex_t *mtx){
+
+    if(createdMain == 0){
+        createMainThread();
+    }
 
     printf("\n\n-----CHAMADO O MLOCK------\n\n");
 
@@ -396,7 +437,7 @@ int mlock (mmutex_t *mtx){
 
             //enqueue(mtx->first, runningThread);
             //mtx->last = runningThread;
-            //printQueue(mtx->first);
+
             scheduler();
         }while(mtx->flag == OCCUPIED_MUTEX);
         mtx->flag = OCCUPIED_MUTEX;
@@ -404,6 +445,16 @@ int mlock (mmutex_t *mtx){
     }
 }
 
+
+/*
+    MUNLOCK:
+    Indica a saída de uma thread da seção crítica, liberando o mutex para que outras threads
+    não possam entrar.
+    Parâmetros:
+        mtx: ponteiro para uma variável do tipo mmutex_t.
+    Retorno:
+        Retorna 0 se concluída com sucesso e -1 quando concluída com erro.
+*/
 int munlock (mmutex_t *mtx){
 
     printf("\n\n-----CHAMADO O MUNLOCK------\n\n");
