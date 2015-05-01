@@ -93,6 +93,57 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
     return tcbQueue;
 }
 
+waitingStruct_t* removeThread(waitingStruct_t *wqueue, int freedTID, waitingStruct_t **wdata){
+    if (wqueue == NULL){
+        return NULL;
+    }
+
+    if (wqueue->waitedThreadTid == freedTID ){ //primeiro elemento é hit
+
+        //recovers the first element
+        *wdata = wqueue;
+
+        //update queue
+        wqueue = wqueue->next;
+
+        //only after updating the return data, the next and prev of that returning data can be NULLED
+        (*wdata)->next = NULL;
+
+
+        return wqueue;
+    }
+    else {
+        waitingStruct_t* ptAux = wqueue->next;
+        waitingStruct_t* ptAuxPrev = wqueue;
+        //loop do segundo em diante
+        for (; ptAux!=NULL; ptAux=ptAux->next){
+            ptAuxPrev = ptAuxPrev->next;
+
+            if (ptAux->waitedThreadTid == freedTID ){
+                //recovers the first element
+                *wdata = ptAux;
+
+                //update queue
+                ptAuxPrev = ptAux->next;
+
+                //only after updating the return data, the next and prev of that returning data can be NULLED
+                (*wdata)->next = NULL;
+
+
+                return wqueue;
+            }
+
+
+
+            //update prev for next step
+            ptAuxPrev = ptAuxPrev->next;
+        }
+
+        //nothing found
+        return wqueue;
+    }
+}
+
 waitingStruct_t* pushThread(waitingStruct_t *wqueue, waitingStruct_t *wdata){
     if(wqueue == NULL){
         wqueue = wdata;
@@ -118,14 +169,16 @@ void printWaitingList(waitingStruct_t *wqueue){
     if (wqueue == NULL){
         printf("\nEmpty Waiting List\n");
     } else {
-        for (; ptAux!=NULL; ptAux=ptAux->next)
+        for (; ptAux!=NULL; ptAux=ptAux->next){
             printf("\nwaitedThread: %d \n",ptAux->waitedThreadTid);
-            TCB_t *teste = ptAux->blockedThread;
-            printf("\nblockedThread: %d \n",teste->tid);
+            //TCB_t *teste = ptAux->blockedThread;
+            printf("\nblockedThread: %d \n",ptAux->blockedThread->tid);
+        }
         //printf("\n");
     }
 
 }
+
 
 /*
 waitingStruct_t* pushThread(waitingStruct_t *wqueue, waitingStruct_t *wdata){

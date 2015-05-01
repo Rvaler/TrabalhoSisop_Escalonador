@@ -88,7 +88,7 @@ void func3()
     munlock(&mutex);
 }
 
-void func()
+void func1()
 {
 	printf("Lock1...\n");
 	mlock(&mutex);
@@ -115,7 +115,7 @@ void func2()
 int main()
 {
     int tid1, tid2;
-    tid1 = mcreate(0, func, NULL);
+    tid1 = mcreate(0, func1, NULL);
 	tid2 = mcreate(1, func2, NULL);
 	//mmutex_init(&mutex);
 	//mlock(&mutex);
@@ -123,6 +123,7 @@ int main()
     //FuncaoParaTeste();
 
     mwait(tid1);
+    mwait(2);
 
 	//swait(tid2);
     return 0;

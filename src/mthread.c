@@ -27,19 +27,8 @@ TCB_t* runningThread = NULL;
 
 waitingStruct_t* waitingList = NULL;
 
+void pushThreadToMutex(mmutex_t *mutex, TCB_t *newWaitingTCB);
 
-void killthread()
-{
-    printf("\nterminou thread com tid: ");
-    printf("%i", runningThread->tid);
-
-    free(runningThread->context->uc_stack.ss_sp);
-    free(runningThread->context);
-    free(runningThread);
-    runningThread = NULL;
-    scheduler();
-    ///aqui mata a thread e chama o escalonador
-}
 
 void FuncaoParaTeste(){
 
@@ -132,6 +121,42 @@ void scheduler(){
 
 }
 
+
+void killthread()
+{
+    printf("\nterminou thread com tid: ");
+    printf("%i", runningThread->tid);
+
+    //adicioner as listas threads que liberaram com esse id
+    waitingStruct_t* returnedData = NULL;
+    waitingList = removeThread(waitingList, runningThread->tid, &returnedData);
+
+    if (returnedData != NULL){
+        printf("\nThread %i liberada!", returnedData->blockedThread->tid);
+        printWaitingList(waitingList);
+        switch(returnedData->blockedThread->prio){
+        case 0: //high
+            tcbQueueHigh = enqueue(tcbQueueHigh, returnedData->blockedThread);
+            break;
+        case 1:
+            tcbQueueMedium = enqueue(tcbQueueMedium, returnedData->blockedThread);
+            break;
+        case 2:
+            tcbQueueLow = enqueue(tcbQueueLow, returnedData->blockedThread);
+            break;
+    }
+    }
+
+
+
+    free(runningThread->context->uc_stack.ss_sp);
+    free(runningThread->context);
+    free(runningThread);
+    runningThread = NULL;
+    scheduler();
+    ///aqui mata a thread e chama o escalonador
+}
+
 //Parâmetros
 //  tid: identificador da thread cujo término está sendo aguardado.
 //Retorno:
@@ -214,6 +239,7 @@ int mwait(int tid){
     printWaitingList(waitingList);
     newBlockedThread->waitedThreadTid = tid;
     newBlockedThread->blockedThread = removedFromRunning;
+
     waitingList = pushThread(waitingList, newBlockedThread);
     printWaitingList(waitingList);
 
@@ -223,6 +249,9 @@ int mwait(int tid){
     //waitingList = pushThread(waitingList, &newWaitingThread);
 
     //printWaitingList(waitingList);
+
+    runningThread = NULL;
+    scheduler();
 }
 
 
@@ -407,8 +436,12 @@ int mlock (mmutex_t *mtx){
         {
             printf("\nMUTEX TAVA OCUPADO\n");
             runningThread->state = BLOCKED_STATE;
-            enqueue(runningThread, &mtx->first);
-            mtx->last = runningThread;
+            //deve colcar thread atual na lista de threads ocupadas por este mutex
+            pushThreadToMutex(mtx, runningThread); //essa função funcionou, e a outra não.... hehe
+
+            //enqueue(mtx->first, runningThread);
+            //mtx->last = runningThread;
+            printQueue(mtx->first);
             scheduler();
         }while(mtx->flag == OCCUPIED_MUTEX);
         mtx->flag = OCCUPIED_MUTEX;
@@ -420,6 +453,7 @@ int munlock (mmutex_t *mtx){
 
     printf("\n\n-----CHAMADO O MUNLOCK------\n\n");
     if (mtx->first != NULL) {
+        printf("\n\n-----CHAMADO O MUNLOCK2------\n\n");
         TCB_t *firstOfMutex = NULL;
         mtx->first = dequeue(mtx->first, &firstOfMutex);
         firstOfMutex->state = READY_STATE;
@@ -441,6 +475,33 @@ int munlock (mmutex_t *mtx){
     mtx->flag = FREE_MUTEX;
     return 0;
 
+}
+
+
+
+
+
+void pushThreadToMutex(mmutex_t *mutex, TCB_t *newWaitingTCB){
+    //TCB_t *ptAuxPrevious = NULL; //auxiliar pointer to precious
+    TCB_t* ptAux = mutex->first;        //pointer to go trough queue
+
+    if (isEmpty(ptAux)){
+        mutex->first = newWaitingTCB; //set first position
+        mutex->first->next = NULL;
+        //return tcbQueue;
+    } else {
+        while(ptAux->next != NULL){ //cycle to the last element
+            ptAux = ptAux->next;
+        }
+
+        //set the next of the last element (a new one)
+        newWaitingTCB->next = NULL;
+        ptAux->next = newWaitingTCB;
+        //adjust previous of last element
+        newWaitingTCB->prev = ptAux;
+        mutex->last = newWaitingTCB;
+
+    }
 }
 
 

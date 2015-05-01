@@ -40,7 +40,7 @@ typedef struct TCB {
 // Struct responsable to implement the waiting threads
 typedef struct waitingStruct {
     int waitedThreadTid;
-    struct TCB *blockedThread;
+    TCB_t *blockedThread;
     struct waitingStruct *next;
 } waitingStruct_t;
 
@@ -54,4 +54,7 @@ TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData);
 TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData);
 
 waitingStruct_t* pushThread(waitingStruct_t *wqueue, waitingStruct_t *wdata);
+waitingStruct_t* removeThread(waitingStruct_t *wqueue, int freedTID, waitingStruct_t **wdata);
+
+
 
