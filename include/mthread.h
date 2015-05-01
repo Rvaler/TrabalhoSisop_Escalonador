@@ -11,9 +11,10 @@
 
 #include "mdata.h"
 
-typedef struct mutex {
-	int	flag; 					// indica se o mutex foi adquirido ou não (0: livre; 1: ocupado)
-	struct TCB	*first, *last; 	// ponteiros para lista de threads bloqueadas no mutex
+typedef struct mutex
+{
+    int	flag; 					// indica se o mutex foi adquirido ou não (0: livre; 1: ocupado)
+    struct TCB	*first, *last; 	// ponteiros para lista de threads bloqueadas no mutex
 } mmutex_t;
 
 int mcreate (int prio, void *(*start)(void *), void *arg);

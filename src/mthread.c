@@ -134,6 +134,18 @@ void killthread()
 }
 
 
+int verifyWaitingList(waitingStruct_t *wqueue, int tid){
+    waitingStruct_t* ptAux = wqueue;        //pointer to go trough queue
+    for (; ptAux!=NULL; ptAux=ptAux->next){
+        if(tid == ptAux->waitedThreadTid){
+            printf("\nErro no MWAIT - thread ja esta sendo esperada por outra thread\n");
+            return -1;
+        }
+    }
+    return 0;
+}
+
+
 /*
     MWAIT:
     Thread aguarda que outra thread termine sua execução para então poder ser executada,
@@ -152,6 +164,10 @@ int mwait(int tid){
 
     printf("\n --- CHAMADO O WAIT --- \n");
     printf("\nThread que estava executando: %i", runningThread->tid);
+
+    if(verifyWaitingList(waitingList, tid) == -1){
+        return -1;
+    }
 
     TCB_t* waitingThisThread = NULL;
     TCB_t* auxiliarTCB = NULL;
@@ -207,6 +223,10 @@ int mwait(int tid){
             }
         }
 
+        if(waitingList != NULL){
+
+        }
+
         if(waitingThisThread == NULL){
             printf("\nFalha no MWait - nao existe thread com este tid");
             return -1;
@@ -229,6 +249,7 @@ int mwait(int tid){
     printf("\nThread %i esta esperando a thread %i acabar! \n", removedFromRunning->tid, tid);
     waitingList = pushThread(waitingList, newBlockedThread);
 
+    printWaitingList(waitingList);
     runningThread = NULL;
     scheduler();
 }
