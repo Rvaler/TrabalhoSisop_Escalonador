@@ -284,7 +284,7 @@ int createMainThread()
 /*
     Creation of a new Thread and put it on ready state
 */
-int mcreate(int prio, void (*start)(void*), void * arg)
+int mcreate(int prio, void *(*start)(void*), void * arg)
 {
     TCB_t *newThread = (TCB_t*) malloc(sizeof(TCB_t));
     if (newThread == NULL){
