@@ -4,8 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h> //usada para malloc
 
+void pushThreadToMutex(mmutex_t *mutex, TCB_t *newWaitingTCB);
+int createMainThread();
+
 int tid = 1;                 //global var, tid of the thread
-int n_threads = 0;           //number of threads
 int createdMain = 0;
 ucontext_t* exit_context = NULL; //all threads, when finished, are redirected to this context
 
@@ -16,13 +18,13 @@ TCB_t* tcbQueueLow = NULL;
 TCB_t* tcbQueueMedium = NULL;
 TCB_t* tcbQueueHigh = NULL;
 
-//current thread running in the core
+//current running thread
 TCB_t* runningThread = NULL;
 
-
+//structure that controls the waiting blocked threads
 waitingStruct_t* waitingList = NULL;
 
-void pushThreadToMutex(mmutex_t *mutex, TCB_t *newWaitingTCB);
+
 
 
 void FuncaoParaTeste(){
@@ -38,6 +40,13 @@ void FuncaoParaTeste(){
 
     return;
 }
+
+/*
+    SCHEDULER
+
+    Função que trabalha como escalonador do sistema, escolhendo qual thread
+    passará ao estado "executando" quando a CPU ficar ociosa.
+*/
 
 void scheduler(){
     printf("\n ----- CHAMADO ESCALONADOR ------------\n");
@@ -78,9 +87,15 @@ void scheduler(){
         return;
     }
 
-
-
 }
+
+/*
+    KILLTHREAD
+
+    Chamado para desalocar da memória uma thread quando sua execução termina.
+    Além disso, procura se alguma thread está bloqueada pela thread que terminou,
+    caso seja verdadeiro então passa a thread que estava bloqueada para o estado apto.
+*/
 
 
 void killthread()
@@ -218,7 +233,12 @@ int mwait(int tid){
     scheduler();
 }
 
+/*
+    Create Main Thread
 
+    Cria a Main Thread (principal) e inicializa a mesma, seu TID será igual a 0
+    e ela sera colocada na lista de alta prioridade.
+*/
 
 int createMainThread()
 {
@@ -302,9 +322,6 @@ int mcreate(int prio, void *(*start)(void*), void * arg)
     newThread->next = NULL;
     newThread->prev = NULL;
 
-
-    n_threads++;
-
     printf("\nThread com tid %i foi criada e colocada na lista de aptos\n", newThread->tid);
 
     switch(prio){
@@ -362,7 +379,7 @@ int myield()
     removedFromRunning = runningThread;
     removedFromRunning->state = READY_STATE;
 
-    printf("\nthread com tid %i foi colocada na lista de aptos\n");
+    printf("\nthread com tid %i foi colocada na lista de aptos\n", removedFromRunning->tid);
     switch(removedFromRunning->prio)
     {
         case 0: //high
@@ -431,7 +448,7 @@ int mlock (mmutex_t *mtx){
         {
             printf("\nMUTEX TAVA OCUPADO\n");
             runningThread->state = BLOCKED_STATE;
-            printf("\nthread com tid %i colocada na lista de bloqueados do mutex\n");
+            printf("\nthread com tid %i colocada na lista de bloqueados do mutex\n", runningThread->tid);
             //deve colocar thread atual na lista de threads ocupadas por este mutex
             pushThreadToMutex(mtx, runningThread); //essa função funcionou, e a outra não.... hehe
 

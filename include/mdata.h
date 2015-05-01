@@ -46,14 +46,17 @@ typedef struct waitingStruct {
 
 #endif
 
+void FuncaoParaTeste(void);
 
-
+//priority lists functions
 void printQueue(TCB_t *tcbQueue);
 void printQueueReverse(TCB_t *tcbQueue);
 int isEmpty(TCB_t *tcbQueue);
 TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData);
 TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData);
 
+//waiting Structure functions
+void printWaitingList(waitingStruct_t *wqueue);
 waitingStruct_t* pushThread(waitingStruct_t *wqueue, waitingStruct_t *wdata);
 waitingStruct_t* removeThread(waitingStruct_t *wqueue, int freedTID, waitingStruct_t **wdata);
 
