@@ -17,7 +17,7 @@
 
 1429041790 
 
-1430519643 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
+1430600507 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/main.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/mdata.h"
@@ -25,7 +25,7 @@
 
 1428981115 e/mthread.h"
 
-1430521085 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
+1430602387 source:/home/rafael/Documents/trabalho1Sisop_Escalonador/src/mthread.c
 	"../include/mthread.h"
 	"../include/mdata.h"
 	<ucontext.h>

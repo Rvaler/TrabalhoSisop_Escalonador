@@ -70,29 +70,31 @@ int main()
     return 0;
 }
 */
+
+/*
 int	id0, id1, id2, id3, id4;
 
 void* func0(void *arg) {
 	printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
-
-	return;
+    //mwait(id3);
+	//return;
 }
 
 void* func1(void *arg) {
 	printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
-	mwait(id3);
+	//mwait(2);
 }
 
 void* func2(void *arg) {
 	printf("lalalalalalalallalaallalalLALALLAALL %d\n", *((int *)arg));
-	mwait(id3);
+
 }
 void* func3(void *arg) {
 	printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
 }
 void* func4(void *arg) {
 	printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
-	mwait(id3);
+
 }
 
 int main(int argc, char *argv[]) {
@@ -110,10 +112,36 @@ int main(int argc, char *argv[]) {
     printf("Eu sou a main após a criação de ID0 e ID1\n");
 
     mwait(id0);
-    mwait(id2);
+    //mwait(id2);
 
     //mwait(id1);
 
     printf("Eu sou a main voltando para terminar o programa\n");
     return 0;
+}
+*/
+
+void* func0(void *arg) {
+	printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
+	return;
+}
+
+void* func1(void *arg) {
+	printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
+}
+
+int main(int argc, char *argv[]) {
+
+    int	id0, id1;
+	int i;
+
+    id0 = mcreate(0, func0, (void *)&i);
+    id1 = mcreate(1, func1, (void *)&i);
+
+    printf("Eu sou a main após a criação de ID0 e ID1\n");
+
+    mwait(id0);
+    mwait(id1);
+
+    printf("Eu sou a main voltando para terminar o programa\n");
 }

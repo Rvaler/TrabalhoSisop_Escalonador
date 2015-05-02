@@ -27,6 +27,7 @@ waitingStruct_t* waitingList = NULL;
 
 
 
+
 void FuncaoParaTeste(){
 
     printf("\nLISTA  alta priori --------\n");
@@ -163,14 +164,17 @@ int mwait(int tid){
     }
 
     printf("\n --- CHAMADO O WAIT --- \n");
-    printf("\nThread que estava executando: %i", runningThread->tid);
+
 
     if(verifyWaitingList(waitingList, tid) == -1){
         return -1;
     }
 
+    printf("\nThread que estava executando: %i", runningThread->tid);
+
     TCB_t* waitingThisThread = NULL;
     TCB_t* auxiliarTCB = NULL;
+
 
     if (runningThread ==  NULL)
     {
@@ -223,9 +227,32 @@ int mwait(int tid){
             }
         }
 
+
+        /// tentar procurar na lista de waiting list tambem, pq uma thread pode dar wait em uma que ta bloqueada
+        /// pq deu um wait tambem
+        /*
         if(waitingList != NULL){
+            printf("\nARPPPP\n");
+            waitingStruct_t *auxiliarWL;
+            auxiliarWL = waitingList;
+
+            while(auxiliarWL != NULL){
+
+
+                if(auxiliarWL->blockedThread->tid == tid){
+                    printf("\nentrou no if\n");
+                    waitingThisThread = auxiliarWL->blockedThread;
+                    break;
+                }else{
+                    printf("\naqui da pau\n");
+                    auxiliarWL = auxiliarWL->next;
+                }
+            }
 
         }
+        */
+
+
 
         if(waitingThisThread == NULL){
             printf("\nFalha no MWait - nao existe thread com este tid");
