@@ -46,7 +46,7 @@ typedef struct waitingStruct {
 
 #endif
 
-void FuncaoParaTeste(void);
+
 
 //priority lists functions
 void printQueue(TCB_t *tcbQueue);
