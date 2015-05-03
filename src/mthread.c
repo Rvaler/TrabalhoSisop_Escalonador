@@ -316,11 +316,12 @@ int createMainThread()
     if ((mainThread->context = (ucontext_t*) malloc(sizeof(ucontext_t))) == NULL){
         return -1;
     }
-
-    runningThread = mainThread;
-    getcontext(mainThread->context);
-    createdMain = 1;
     printf("\nCriada a main thread com tid %i\n", mainThread->tid);
+    runningThread = mainThread;
+    createdMain = 1;
+    getcontext(mainThread->context);
+
+
     return 0;
 }
 
