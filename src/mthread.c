@@ -27,22 +27,17 @@ waitingStruct_t* waitingList = NULL;
 
 
 
-//todas threads bloqueadas por mlock
-TCB_t* mlockBlockedThreads = NULL;
-
-
-
 
 
 void FuncaoParaTeste(){
 
-    printf("\nLISTA  alta priori --------\n");
+    //printf("\nLISTA  alta priori --------\n");
     printQueue(tcbQueueHigh);
 
-    printf("\nLISTA  media priori --------\n");
+    //printf("\nLISTA  media priori --------\n");
     printQueue(tcbQueueMedium);
 
-    printf("\nLISTA  baixa priori --------\n");
+    //printf("\nLISTA  baixa priori --------\n");
     printQueue(tcbQueueLow);
 
     return;
@@ -56,7 +51,7 @@ void FuncaoParaTeste(){
 */
 
 void scheduler(){
-    printf("\n ----- CHAMADO ESCALONADOR ------------\n");
+    //printf("\n ----- CHAMADO ESCALONADOR ------------\n");
 
     TCB_t *wasRunning = NULL;
     TCB_t *choosenThread = NULL;
@@ -66,15 +61,15 @@ void scheduler(){
 
     if (tcbQueueHigh != NULL){
         tcbQueueHigh = dequeue(tcbQueueHigh, &choosenThread);
-        printf("\nEscalonador entrando na lista de alta prioridade\n");
+        //printf("\nEscalonador entrando na lista de alta prioridade\n");
     }else if(tcbQueueMedium != NULL){
         tcbQueueMedium = dequeue(tcbQueueMedium, &choosenThread);
-        printf("\nEscalonador entrando na lista de media prioridade\n");
+        //printf("\nEscalonador entrando na lista de media prioridade\n");
     }else if(tcbQueueLow != NULL){
         tcbQueueLow = dequeue(tcbQueueLow, &choosenThread);
-        printf("\nEscalonador entrando na lista de baixa prioridade\n");
+        //printf("\nEscalonador entrando na lista de baixa prioridade\n");
     }else {
-        printf("\n\n####Todas filas vazias\n");
+        //printf("\n\n####Todas filas vazias\n");
         ///TODO
         ///o que faz quando todas listas estão vazias?
     }
@@ -84,15 +79,15 @@ void scheduler(){
 
     //realiza a troca de contextos entre a thread que estava executando e a nova thread que executará
     if (wasRunning != NULL){
-        printf("\nEscaloonador vai fazer o swapcontext\n");
-        printf("\nQuem estava rodando: %i \nQuem vai rodar: %i\n", wasRunning->tid, choosenThread->tid);
+        //printf("\nEscaloonador vai fazer o swapcontext\n");
+        //printf("\nQuem estava rodando: %i \nQuem vai rodar: %i\n", wasRunning->tid, choosenThread->tid);
         swapcontext(wasRunning->context, choosenThread->context);
         return;
     }else{
 
     //seta o contexto, isso acontece quando não existia thread executando
-        printf("\nEscalonador vai setar o contexto");
-        printf("\nQuem vai rodar: %i\n", choosenThread->tid);
+        //printf("\nEscalonador vai setar o contexto");
+        //printf("\nQuem vai rodar: %i\n", choosenThread->tid);
         setcontext(choosenThread->context);
         return;
     }
@@ -110,8 +105,8 @@ void scheduler(){
 
 void killthread()
 {
-    printf("\nTerminou thread com tid: ");
-    printf("%i", runningThread->tid);
+    //printf("\nTerminou thread com tid: ");
+    //printf("%i", runningThread->tid);
 
     //adiciona as listas threads que liberaram com esse id
     waitingStruct_t* returnedData = NULL;
@@ -120,7 +115,7 @@ void killthread()
 
     //caso exista alguma thread esperando pela que terminou, aquela é colocada na lista de aptos
     if (returnedData != NULL){
-        printf("\nThread %i liberou a thread %i \n!!", runningThread->tid,returnedData->blockedThread->tid);
+        //printf("\nThread %i liberou a thread %i \n!!", runningThread->tid,returnedData->blockedThread->tid);
         printWaitingList(waitingList);
         switch(returnedData->blockedThread->prio){
         case 0: //high
@@ -150,7 +145,7 @@ int verifyWaitingList(waitingStruct_t *wqueue, int tid){
     waitingStruct_t* ptAux = wqueue;        //pointer to go trough queue
     for (; ptAux!=NULL; ptAux=ptAux->next){
         if(tid == ptAux->waitedThreadTid){
-            printf("\nErro no MWAIT - thread ja esta sendo esperada por outra thread\n");
+            //printf("\nErro no MWAIT - thread ja esta sendo esperada por outra thread\n");
             return -1;
         }
     }
@@ -176,21 +171,21 @@ int mwait(int tid){
         }
     }
 
-    printf("\n --- CHAMADO O WAIT --- \n");
+    //printf("\n --- CHAMADO O WAIT --- \n");
 
     // evita que duas threads diferentes esperem pela mesma thread
     if(verifyWaitingList(waitingList, tid) == -1){
         return -1;
     }
 
-    printf("\nThread que estava executando: %i", runningThread->tid);
+    //printf("\nThread que estava executando: %i", runningThread->tid);
 
     TCB_t* waitingThisThread = NULL;
     TCB_t* auxiliarTCB = NULL;
 
     if (runningThread ==  NULL)
     {
-        printf("\nFalha no mwait!!");
+        //printf("\nFalha no mwait!!");
         return -1;
 
     }else{
@@ -241,26 +236,11 @@ int mwait(int tid){
         }
 
 
-        ///procurando em threads que estao bloqueadas por mlock;
-        if(mlockBlockedThreads != NULL){
-            auxiliarTCB = mlockBlockedThreads;
-            while(auxiliarTCB != NULL){
-
-                if(auxiliarTCB->tid == tid){
-                    waitingThisThread = auxiliarTCB;
-                    break;
-                }else{
-                    auxiliarTCB = auxiliarTCB->next;
-                }
-            }
-        }
-
-
         /// tentar procurar na lista de waiting list tambem, pq uma thread pode dar wait em uma que ta bloqueada
         /// pq deu um wait tambem
         /*
         if(waitingList != NULL){
-            printf("\nARPPPP\n");
+            //printf("\nARPPPP\n");
             waitingStruct_t *auxiliarWL;
             auxiliarWL = waitingList;
 
@@ -268,11 +248,11 @@ int mwait(int tid){
 
 
                 if(auxiliarWL->blockedThread->tid == tid){
-                    printf("\nentrou no if\n");
+                    //printf("\nentrou no if\n");
                     waitingThisThread = auxiliarWL->blockedThread;
                     break;
                 }else{
-                    printf("\naqui da pau\n");
+                    //printf("\naqui da pau\n");
                     auxiliarWL = auxiliarWL->next;
                 }
             }
@@ -283,8 +263,8 @@ int mwait(int tid){
 
         // thread esperada pelo mwait não foi encontrada, erro!
         if(waitingThisThread == NULL){
-            printf("\nFalha no MWait - nao existe thread com este tid");
-            exit(-1);
+            //printf("\nFalha no MWait - nao existe thread com este tid");
+            return -1;
         }
 
     }
@@ -297,13 +277,13 @@ int mwait(int tid){
     // o término de outra thread
     waitingStruct_t *newBlockedThread = (waitingStruct_t*) malloc(sizeof(waitingStruct_t));
     if(newBlockedThread == NULL){
-        printf("\nFalha no MWait - nao tem memoria disponivel\n");
+        //printf("\nFalha no MWait - nao tem memoria disponivel\n");
         return -1;
     }
 
     newBlockedThread->waitedThreadTid = tid;
     newBlockedThread->blockedThread = removedFromRunning;
-    printf("\nThread %i esta esperando a thread %i acabar! \n", removedFromRunning->tid, tid);
+    //printf("\nThread %i esta esperando a thread %i acabar! \n", removedFromRunning->tid, tid);
     waitingList = pushThread(waitingList, newBlockedThread);
 
     printWaitingList(waitingList);
@@ -336,7 +316,7 @@ int createMainThread()
     if ((mainThread->context = (ucontext_t*) malloc(sizeof(ucontext_t))) == NULL){
         return -1;
     }
-    printf("\nCriada a main thread com tid %i\n", mainThread->tid);
+    //printf("\nCriada a main thread com tid %i\n", mainThread->tid);
     runningThread = mainThread;
     createdMain = 1;
     getcontext(mainThread->context);
@@ -364,18 +344,18 @@ int mcreate(int prio, void *(*start)(void*), void * arg)
         }
     }
 
-    printf("\n ---- CHAMADO O MCREATE ----- \n");
+    //printf("\n ---- CHAMADO O MCREATE ----- \n");
 
     TCB_t *newThread = (TCB_t*) malloc(sizeof(TCB_t));
     if (newThread == NULL){
-        printf("\nErro na criação da thread!! \n");
+        //printf("\nErro na criação da thread!! \n");
         return -1;
     }
 
     //criação do contexto de término das threads
     if (exit_context == NULL)
     {
-        printf("\nCriou Exit Context\n");
+        //printf("\nCriou Exit Context\n");
         exit_context = (ucontext_t*) malloc(sizeof(ucontext_t));
         if (exit_context== NULL)
             return -1;
@@ -409,7 +389,7 @@ int mcreate(int prio, void *(*start)(void*), void * arg)
     newThread->next = NULL;
     newThread->prev = NULL;
 
-    printf("\nThread com tid %i foi criada e colocada na lista de aptos\n", newThread->tid);
+    //printf("\nThread com tid %i foi criada e colocada na lista de aptos\n", newThread->tid);
 
     //inserção da thread criada na lista de aptos
     switch(prio){
@@ -447,20 +427,20 @@ int myield()
         }
     }
 
-    printf("\n ----- CHAMADO O YIELD ------------");
+    //printf("\n ----- CHAMADO O YIELD ------------");
     //if there's no thread executing, error!
     if (runningThread ==  NULL)
     {
         return -1;
     }
 
-    printf("\n quem chamou YIELD: %i\n", runningThread->tid);
+    //printf("\n quem chamou YIELD: %i\n", runningThread->tid);
 
     TCB_t *removedFromRunning ;
     removedFromRunning = runningThread;
     removedFromRunning->state = READY_STATE;
 
-    printf("\nthread com tid %i foi colocada na lista de aptos\n", removedFromRunning->tid);
+    //printf("\nthread com tid %i foi colocada na lista de aptos\n", removedFromRunning->tid);
 
     //thread que estava executando é colocada na lista de aptos
     switch(removedFromRunning->prio)
@@ -489,16 +469,16 @@ int myield()
 */
 
 int mmutex_init(mmutex_t *mtx){
-    printf("\n\n-----CHAMADO O M_INIT ------\n\n");
+    //printf("\n\n-----CHAMADO O M_INIT ------\n\n");
     if(mtx){
-        printf("criou mutex");
+        //printf("criou mutex");
         mtx->flag = FREE_MUTEX;
         mtx->first = NULL;
         mtx->last = NULL;
         return 0;
     }
 
-    printf("nao criou mutex");
+    //printf("nao criou mutex");
     return -1;
 }
 
@@ -520,11 +500,11 @@ int mlock (mmutex_t *mtx){
         }
     }
 
-    printf("\n\n-----CHAMADO O MLOCK------\n\n");
+    //printf("\n\n-----CHAMADO O MLOCK------\n\n");
 
     //se mutex estava livre, agora se torna ocupado pela thread que chamou a função
     if (mtx->flag == FREE_MUTEX){
-        printf("\nMUTEX TAVA LIVRE\n");
+        //printf("\nMUTEX TAVA LIVRE\n");
         mtx->flag = OCCUPIED_MUTEX;
         return 0;
 
@@ -533,14 +513,13 @@ int mlock (mmutex_t *mtx){
     //mutex estava ocupado, thread fica bloqueada na lista de bloqueadas pelo mutex
         do
         {
-            printf("\nMUTEX TAVA OCUPADO\n");
+            //printf("\nMUTEX TAVA OCUPADO\n");
             runningThread->state = BLOCKED_STATE;
-            printf("\nthread com tid %i colocada na lista de bloqueados do mutex\n", runningThread->tid);
+            //printf("\nthread com tid %i colocada na lista de bloqueados do mutex\n", runningThread->tid);
             //deve colocar thread atual na lista de threads ocupadas por este mutex
             pushThreadToMutex(mtx, runningThread);
-
-            //adicioina para a lista geral
-            mlockBlockedThreads = enqueue(mlockBlockedThreads, runningThread);
+            //enqueue(mtx->first, runningThread);
+            //mtx->last = runningThread;
 
             scheduler();
         }while(mtx->flag == OCCUPIED_MUTEX);
@@ -561,7 +540,7 @@ int mlock (mmutex_t *mtx){
 */
 int munlock (mmutex_t *mtx){
 
-    printf("\n\n-----CHAMADO O MUNLOCK------\n\n");
+    //printf("\n\n-----CHAMADO O MUNLOCK------\n\n");
 
     // coloca a primeira thread da lista de bloqueadas pelo mutex na lista de aptos
     if (mtx->first != NULL) {
@@ -569,10 +548,7 @@ int munlock (mmutex_t *mtx){
         TCB_t *firstOfMutex = NULL;
         mtx->first = dequeue(mtx->first, &firstOfMutex);
         firstOfMutex->state = READY_STATE;
-        //remove da lista geral de bloqueados por mutex
-        mlockBlockedThreads = removeFromTid(mlockBlockedThreads, firstOfMutex->tid);
-
-        printf("\nthread com tid %i colocada na lista de aptos\n", firstOfMutex->tid);
+        //printf("\nthread com tid %i colocada na lista de aptos\n", firstOfMutex->tid);
         switch(firstOfMutex->prio)
         {
             case 0: //high
