@@ -54,6 +54,7 @@ void printQueueReverse(TCB_t *tcbQueue);
 int isEmpty(TCB_t *tcbQueue);
 TCB_t* enqueue(TCB_t *tcbQueue, TCB_t *tcbData);
 TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData);
+TCB_t* removeFromTid(TCB_t *tcbQueue, int tid);
 
 //waiting Structure functions
 void printWaitingList(waitingStruct_t *wqueue);

@@ -27,6 +27,11 @@ waitingStruct_t* waitingList = NULL;
 
 
 
+//todas threads bloqueadas por mlock
+TCB_t* mlockBlockedThreads = NULL;
+
+
+
 
 
 void FuncaoParaTeste(){
@@ -236,6 +241,21 @@ int mwait(int tid){
         }
 
 
+        ///procurando em threads que estao bloqueadas por mlock;
+        if(mlockBlockedThreads != NULL){
+            auxiliarTCB = mlockBlockedThreads;
+            while(auxiliarTCB != NULL){
+
+                if(auxiliarTCB->tid == tid){
+                    waitingThisThread = auxiliarTCB;
+                    break;
+                }else{
+                    auxiliarTCB = auxiliarTCB->next;
+                }
+            }
+        }
+
+
         /// tentar procurar na lista de waiting list tambem, pq uma thread pode dar wait em uma que ta bloqueada
         /// pq deu um wait tambem
         /*
@@ -264,7 +284,7 @@ int mwait(int tid){
         // thread esperada pelo mwait não foi encontrada, erro!
         if(waitingThisThread == NULL){
             printf("\nFalha no MWait - nao existe thread com este tid");
-            return -1;
+            exit(-1);
         }
 
     }
@@ -518,8 +538,9 @@ int mlock (mmutex_t *mtx){
             printf("\nthread com tid %i colocada na lista de bloqueados do mutex\n", runningThread->tid);
             //deve colocar thread atual na lista de threads ocupadas por este mutex
             pushThreadToMutex(mtx, runningThread);
-            //enqueue(mtx->first, runningThread);
-            //mtx->last = runningThread;
+
+            //adicioina para a lista geral
+            mlockBlockedThreads = enqueue(mlockBlockedThreads, runningThread);
 
             scheduler();
         }while(mtx->flag == OCCUPIED_MUTEX);
@@ -548,6 +569,9 @@ int munlock (mmutex_t *mtx){
         TCB_t *firstOfMutex = NULL;
         mtx->first = dequeue(mtx->first, &firstOfMutex);
         firstOfMutex->state = READY_STATE;
+        //remove da lista geral de bloqueados por mutex
+        mlockBlockedThreads = removeFromTid(mlockBlockedThreads, firstOfMutex->tid);
+
         printf("\nthread com tid %i colocada na lista de aptos\n", firstOfMutex->tid);
         switch(firstOfMutex->prio)
         {

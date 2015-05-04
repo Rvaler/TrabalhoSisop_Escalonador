@@ -93,6 +93,44 @@ TCB_t* dequeue(TCB_t *tcbQueue, TCB_t **tcbData){
     return tcbQueue;
 }
 
+TCB_t* removeFromTid(TCB_t *tcbQueue, int tid){
+    if (tcbQueue == NULL){
+        return NULL;
+    }
+
+    if (tcbQueue->tid == tid ){ //primeiro elemento é hit
+
+        //update queue
+        tcbQueue = tcbQueue->next;
+
+        return tcbQueue;
+    }
+    else {
+        TCB_t* ptAux = tcbQueue->next;
+        TCB_t* ptAuxPrev = tcbQueue;
+        //loop do segundo em diante
+        for (; ptAux!=NULL; ptAux=ptAux->next){
+            //ptAuxPrev = ptAuxPrev->next;
+
+            if (ptAux->tid == tid ){
+
+                //update queue
+                ptAuxPrev->next = ptAux->next;
+
+                return tcbQueue;
+            }
+
+
+            //update prev for next step
+            ptAuxPrev = ptAuxPrev->next;
+        }
+
+        //nothing found
+        return tcbQueue;
+    }
+
+}
+
 waitingStruct_t* removeThread(waitingStruct_t *wqueue, int freedTID, waitingStruct_t **wdata){
     if (wqueue == NULL){
         return NULL;
